@@ -1,0 +1,2 @@
+
+-Dans class Conv : gérer la réception des types File
