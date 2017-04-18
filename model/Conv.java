@@ -1,6 +1,6 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Conv {
 	private Dest Dest;

@@ -16,16 +16,24 @@ public class User implements Dest{
 		conversation = new Conv(); 
 	}
 	
-public String getPseudo (User us){ 
-	return us.pseudo; 
-}
-
-public Inet4Address getIP (User us){
-	return us.IP; 
-}
-
-public boolean getStatus (User us){ 
-	return us.isConnected; 
-}
+	public String getPseudo (User us){ 
+		return us.pseudo; 
+	}
+	
+	public Inet4Address getIP (User us){
+		return us.IP; 
+	}
+	
+	public boolean getStatus (User us){ 
+		return us.isConnected; 
+	}
+	
+	public void setPseudo (String newPseudo) {
+		this.pseudo = newPseudo; 
+	}
+	
+	public void setStatus (boolean newStatus) {
+		this.isConnected = newStatus; 
+	}
 	
 }
