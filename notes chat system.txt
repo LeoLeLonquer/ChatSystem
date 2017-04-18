@@ -1,0 +1,7 @@
+- AllUsters -> ??? sémantique? 
+- diagrammes de sqce en bte blanche 
+- interface: 
+	- rechercher user... 
+- statuts --> classe? 
+- ajout de la classe LoggedUser: concerne l'utilisateur courant "moi"
+	-contient login, disconnect, etc?  
