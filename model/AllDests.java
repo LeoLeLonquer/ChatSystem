@@ -1,19 +1,84 @@
 package model; 
+import java.net.Inet4Address;
 import java.util.*;
 
 public class AllDests {
-	private ArrayList<User> ListDests ;
+	static int id; 
+	private HashMap<Integer, User> ListUsers; 
+	private HashMap<Integer, Groupe> ListGroups; 
 	
 	public AllDests() { 
-		ListDests = new ArrayList<User>() ; 
+		ListUsers = new HashMap<Integer, User>() ; 
+		ListGroups = new HashMap <Integer, Groupe> (); 
 	}
 
-	public boolean checkAvailable (User us) {
-		return us.getStatus(us); 
-	}
-	
+//	public boolean checkAvailable (User us) {
+//		return us.getStatus(us); 
+//	}
 	// rechercher user
 	// lire ensemble de la liste (pour voir qui est co)
 	// ajouter un utilisateur, change
+	
+//	public void makeListeCo () {
+//		//for (int i = 0 ; i< this.ListDests.size() ; i++) {
+//			//if (this.ListDests.get(i).getStatus(ListDests.get(i)) ) {
+//		for (Iterator<User> iter = this.ListDests.iterator(); iter.hasNext(); ) {
+//			User us = iter.next();
+//		    if (us.getStatus(us)) { 
+//		    	this.ListCo.add(us); 
+//			}
+//		}
+//	}
+	
+	public HashMap<Integer,User> getListUsers(){
+		return this.ListUsers; 
+	}
+	
+	public HashMap<Integer,Groupe> getListGroups(){
+		return this.ListGroups; 
+	}
+	
+	public void addUser(User us) { 
+		this.ListUsers.put(id, us) ; 
+		id++;
+	}
 
+	public void addGroup(Groupe group) {
+		this.ListGroups.put(id, group); 
+		id++;
+	}
+	
+	public void removeUser(int identify){ 
+		this.ListUsers.remove(identify);
+	}
+	
+	public void removeGroup(int identify){ 
+		this.ListGroups.remove(identify); 
+	}
+	
+	public User searchUser(int identifier){ 
+//		if (ListUsers.containsKey(identifier)){ 
+//			for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
+//				Integer id = it.next(); 
+//				if (id==identifier) {
+		return this.ListUsers.get(identifier);
+//				}
+//			}
+//		}
+//		return null; 
+	}
+	
+	public Groupe searcGroup(int identifier){ 
+		return this.ListGroups.get(identifier); 
+	}
+	
+	public User searchByIP(Inet4Address IP){ 
+		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
+			User us = this.ListUsers.get(it.next()); 
+			if( us.getIP(us)==IP) { 
+				return us; 
+			}
+		}
+		return null; 
+	}
 }
