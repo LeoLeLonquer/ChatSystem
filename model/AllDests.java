@@ -1,4 +1,5 @@
 package model; 
+import java.net.Inet4Address;
 import java.util.*;
 
 public class AllDests {
@@ -28,6 +29,14 @@ public class AllDests {
 //			}
 //		}
 //	}
+	
+	public HashMap<Integer,User> getListUsers(){
+		return this.ListUsers; 
+	}
+	
+	public HashMap<Integer,Groupe> getListGroups(){
+		return this.ListGroups; 
+	}
 	
 	public void addUser(User us) { 
 		this.ListUsers.put(id, us) ; 
@@ -61,5 +70,15 @@ public class AllDests {
 	
 	public Groupe searcGroup(int identifier){ 
 		return this.ListGroups.get(identifier); 
+	}
+	
+	public User searchByIP(Inet4Address IP){ 
+		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
+			User us = this.ListUsers.get(it.next()); 
+			if( us.getIP(us)==IP) { 
+				return us; 
+			}
+		}
+		return null; 
 	}
 }
