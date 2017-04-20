@@ -4,13 +4,15 @@ import java.net.Inet4Address;
 
 public class User implements Dest{
 	private String pseudo;
+	private int id; 
 	private Inet4Address  IP;
 	private boolean isConnected ;
 	private Conv conversation; 
 
 	
-	public User(String pseudo,Inet4Address  IP, boolean isConnected){
+	public User(String pseudo,int id, Inet4Address  IP, boolean isConnected){
 		this.pseudo=pseudo;
+		this.id = id; 
 		this.IP=IP;
 		this.isConnected=isConnected;
 		conversation = new Conv(); 
@@ -18,6 +20,10 @@ public class User implements Dest{
 	
 	public String getPseudo (User us){ 
 		return us.pseudo; 
+	}
+	
+	public int getID (User us) {
+		return us.id; 
 	}
 	
 	public Inet4Address getIP (User us){
@@ -36,4 +42,14 @@ public class User implements Dest{
 		this.isConnected = newStatus; 
 	}
 	
+	public String toString() {
+		String status = ""; 
+		if (this.isConnected){ 
+			status = " is connected"; 
+			}
+		else {
+			status = " is disconnected"; 
+		}
+		return ("User " + this.pseudo + " (id: " + (this.id) + ") " + this.IP.toString() + ", " + status); 
+	}
 }
