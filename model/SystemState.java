@@ -18,9 +18,9 @@ public class SystemState {
 		allDests = new AllDests(); 
 	}
 	
-	private void setLoggedUser (String chosenName) throws UnknownHostException {
+	private void setLoggedUser (String chosenName, int id) throws UnknownHostException {
 		Inet4Address  IP = (Inet4Address) Inet4Address.getLocalHost(); 
-		loggedUser = new User(chosenName, IP, true) ; 
+		loggedUser = new User(chosenName, id, IP, true) ; 
 	}
 
 	// méthodes pour modif attribue

@@ -3,7 +3,6 @@ import java.net.Inet4Address;
 import java.util.*;
 
 public class AllDests {
-	static int id; 
 	private HashMap<Integer, User> ListUsers; 
 	private HashMap<Integer, Groupe> ListGroups; 
 	
@@ -39,37 +38,35 @@ public class AllDests {
 	}
 	
 	public void addUser(User us) { 
-		this.ListUsers.put(id, us) ; 
-		id++;
+		this.ListUsers.put(us.getID(us), us) ; 
 	}
 
 	public void addGroup(Groupe group) {
-		this.ListGroups.put(id, group); 
-		id++;
+		this.ListGroups.put(group.getID(group), group); 
 	}
 	
-	public void removeUser(int identify){ 
-		this.ListUsers.remove(identify);
+	public void removeUser(int id){ 
+		this.ListUsers.remove(id);
 	}
 	
-	public void removeGroup(int identify){ 
-		this.ListGroups.remove(identify); 
+	public void removeGroup(int id){ 
+		this.ListGroups.remove(id); 
 	}
 	
-	public User searchUser(int identifier){ 
+	public User searchUser(int id){ 
 //		if (ListUsers.containsKey(identifier)){ 
 //			for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
 //				Integer id = it.next(); 
 //				if (id==identifier) {
-		return this.ListUsers.get(identifier);
+		return this.ListUsers.get(id);
 //				}
 //			}
 //		}
 //		return null; 
 	}
 	
-	public Groupe searcGroup(int identifier){ 
-		return this.ListGroups.get(identifier); 
+	public Groupe searcGroup(int id){ 
+		return this.ListGroups.get(id); 
 	}
 	
 	public User searchByIP(Inet4Address IP){ 
