@@ -1,5 +1,7 @@
-package network;
+package model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
 
@@ -9,11 +11,8 @@ import java.net.InetAddress;
 public class ControlMessage implements Serializable {
 
     private String userName;
-
     private InetAddress userAdresse;
-
     private int port;
-
     private String data;
 
     public ControlMessage(String userName, InetAddress userAdresse, int port, String data) {
@@ -22,6 +21,7 @@ public class ControlMessage implements Serializable {
         this.port = port;
         this.data = data;
     }
+    
 
     public String getUserName() {
         return userName;
@@ -49,3 +49,4 @@ public class ControlMessage implements Serializable {
                 '}';
     }
 }
+
