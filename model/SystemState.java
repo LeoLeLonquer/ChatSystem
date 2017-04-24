@@ -8,22 +8,27 @@ public class SystemState {
 //	private String name; 
 //	private boolean isConnected ; 
 //	private Conv conv = new Conv(); 
-	static User loggedUser; 
-	private AllDests allDests; 
 	
+	static User loggedUser; 
+	public AllDests allDests; 
+	private Communication comModule;
+	int sommetID=1;
+
 	
 	public SystemState(String chosenName){
 	    // this name is chosen when the user fist logs in ; 
 		// a window should pop to let the user choose their name --> value transferred to LoggedUser
-		allDests = new AllDests(); 
+		allDests = new AllDests(this); 
+		comModule=new Communication(this);
 	}
 	
 	private void setLoggedUser (String chosenName, int id) throws UnknownHostException {
-		Inet4Address  IP = (Inet4Address) Inet4Address.getLocalHost(); 
+		InetAddress  IP = (InetAddress) InetAddress.getLocalHost(); 
 		loggedUser = new User(chosenName, id, IP, true) ; 
 	}
+	
 
-	// méthodes pour modif attribue
+	// mï¿½thodes pour modif attribue
 	
 // selectConv 
 	

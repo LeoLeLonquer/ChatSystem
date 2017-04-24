@@ -1,16 +1,16 @@
 package model;
 
-import java.net.Inet4Address;
+import java.net.InetAddress;
 
 public class User implements Dest{
 	private String pseudo;
 	private int id; 
-	private Inet4Address  IP;
+	private InetAddress  IP;
 	private boolean isConnected ;
 	private Conv conversation; 
 
 	
-	public User(String pseudo,int id, Inet4Address  IP, boolean isConnected){
+	public User(String pseudo,int id, InetAddress  IP, boolean isConnected){
 		this.pseudo=pseudo;
 		this.id = id; 
 		this.IP=IP;
@@ -18,24 +18,28 @@ public class User implements Dest{
 		conversation = new Conv(); 
 	}
 	
-	public String getPseudo (User us){ 
-		return us.pseudo; 
+	public String getPseudo (){ 
+		return this.pseudo; 
 	}
 	
-	public int getID (User us) {
-		return us.id; 
+	public int getID () {
+		return this.id; 
 	}
 	
-	public Inet4Address getIP (User us){
-		return us.IP; 
+	public InetAddress getIP (){
+		return this.IP; 
 	}
 	
-	public boolean getStatus (User us){ 
-		return us.isConnected; 
+	public boolean getStatus (){ 
+		return this.isConnected; 
 	}
 	
 	public void setPseudo (String newPseudo) {
 		this.pseudo = newPseudo; 
+	}
+	
+	public void setIP(InetAddress IP){
+		this.IP=IP;
 	}
 	
 	public void setStatus (boolean newStatus) {
@@ -52,4 +56,9 @@ public class User implements Dest{
 		}
 		return ("User " + this.pseudo + " (id: " + (this.id) + ") " + this.IP.toString() + ", " + status); 
 	}
+
+	public Conv getConv() {
+		return this.conversation;
+	}
+
 }

@@ -3,17 +3,18 @@ import java.net.Inet4Address;
 import java.util.*;
 
 public class AllDests {
+	
+	SystemState sysState;
 	private HashMap<Integer, User> ListUsers; 
 	private HashMap<Integer, Groupe> ListGroups; 
 	
-	public AllDests() { 
+	public AllDests(SystemState sysState) { 
+		this.sysState=sysState;
 		ListUsers = new HashMap<Integer, User>() ; 
 		ListGroups = new HashMap <Integer, Groupe> (); 
 	}
 
-//	public boolean checkAvailable (User us) {
-//		return us.getStatus(us); 
-//	}
+
 	// rechercher user
 	// lire ensemble de la liste (pour voir qui est co)
 	// ajouter un utilisateur, change
@@ -38,7 +39,8 @@ public class AllDests {
 	}
 	
 	public void addUser(User us) { 
-		this.ListUsers.put(us.getID(us), us) ; 
+		this.ListUsers.put(us.getID(), us) ;
+		sysState.sommetID++;
 	}
 
 	public void addGroup(Groupe group) {
@@ -53,29 +55,40 @@ public class AllDests {
 		this.ListGroups.remove(id); 
 	}
 	
-	public User searchUser(int id){ 
-//		if (ListUsers.containsKey(identifier)){ 
-//			for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
-//				Integer id = it.next(); 
-//				if (id==identifier) {
+	public User getUser(int id){ 
 		return this.ListUsers.get(id);
-//				}
-//			}
-//		}
-//		return null; 
 	}
 	
-	public Groupe searcGroup(int id){ 
+	public int searchUserIDByIP(Inet4Address IP){ 
+		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
+			User us = this.ListUsers.get(it.next()); 
+			if( us.getIP()==IP) { 
+				return us.hashCode(); 
+			}
+		}
+		return -1; 
+	}
+	
+	public int searchUserIDByPseudo(String pseudo){
+		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
+			User us = this.ListUsers.get(it.next()); 
+			if( us.getPseudo().equals(pseudo)) { 
+				return us.hashCode(); 
+			}
+		}
+		return -1; 
+	}
+	
+	public Groupe searchGroup(int id){ 
 		return this.ListGroups.get(id); 
 	}
 	
-	public User searchByIP(Inet4Address IP){ 
-		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
-			User us = this.ListUsers.get(it.next()); 
-			if( us.getIP(us)==IP) { 
-				return us; 
-			}
-		}
-		return null; 
+	public boolean checkAvailable (String pseudo) {
+		if (this.searchUserIDByPseudo(pseudo)!=-1)
+			return true;
+		else 
+			return false; 
 	}
+	
+
 }
