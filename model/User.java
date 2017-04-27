@@ -46,6 +46,11 @@ public class User implements Dest{
 		this.isConnected = newStatus; 
 	}
 	
+	public Conv getConv() {
+		return this.conversation;
+	}
+	
+	@Override
 	public String toString() {
 		String status = ""; 
 		if (this.isConnected){ 
@@ -54,11 +59,7 @@ public class User implements Dest{
 		else {
 			status = " is disconnected"; 
 		}
-		return ("User " + this.pseudo + " (id: " + (this.id) + ") " + this.IP.toString() + ", " + status); 
-	}
-
-	public Conv getConv() {
-		return this.conversation;
+		return ("Pseudo : " + this.pseudo + " | id : " + this.id + " | IP : "+ this.IP.toString() + " | Status : " + status); 
 	}
 
 }

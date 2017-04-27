@@ -62,8 +62,8 @@ public class AllDests {
 	public int searchUserIDByIP(Inet4Address IP){ 
 		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
 			User us = this.ListUsers.get(it.next()); 
-			if( us.getIP()==IP) { 
-				return us.hashCode(); 
+			if( us.getIP().equals(IP)) { 
+				return us.getID(); 
 			}
 		}
 		return -1; 
@@ -73,7 +73,7 @@ public class AllDests {
 		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
 			User us = this.ListUsers.get(it.next()); 
 			if( us.getPseudo().equals(pseudo)) { 
-				return us.hashCode(); 
+				return us.getID(); 
 			}
 		}
 		return -1; 
@@ -85,10 +85,19 @@ public class AllDests {
 	
 	public boolean checkAvailable (String pseudo) {
 		if (this.searchUserIDByPseudo(pseudo)!=-1)
-			return true;
+			return false;
 		else 
-			return false; 
+			return true; 
 	}
 	
-
+	@Override
+	public String toString(){
+		String str="";
+		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
+			User us = this.ListUsers.get(it.next()); 
+			str=str+us.toString()+"\n";
+		}
+		return str;
+	}
+	
 }

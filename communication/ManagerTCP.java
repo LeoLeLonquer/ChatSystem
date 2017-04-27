@@ -105,8 +105,8 @@ public class ManagerTCP extends Thread{
 		}
 	}
 
-
-	public void setNewSocket(InetAddress IP, int port) {
+	
+	public void setNewClientSocket(InetAddress IP, int port) {
 		try {
 			this.port=port;
 			this.clientSocks= new Socket(IP,port);
@@ -164,6 +164,14 @@ public class ManagerTCP extends Thread{
 
 	public int getPort() {
 		return this.port;
+	}
+	
+	public void close(){
+		try {
+			this.clientSocks.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

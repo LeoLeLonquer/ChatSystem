@@ -12,49 +12,39 @@ import communication.Message.DataType;
 import model.SystemState;
 import model.User;
 
-public class Communication extends Thread {
+public class Communication {
 	
 	Controller controller;
 	SystemState sysState;
 	ManagerUDP ManagerUDP;
 	HashMap<Integer,ManagerTCP> listeManagerTCP ;
-	int listeningPort=15530;
+	int listeningPort=1404;
 	int cptSocket=1;
 	
 	public Communication(SystemState sysState){
+		System.out.println("Démarrage comModule");
+		 this.sysState=sysState;
 		try {
-			 this.sysState=sysState;
 			 this.ManagerUDP=new ManagerUDP(this);
 			 this.listeManagerTCP = new HashMap<Integer,ManagerTCP>();
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		start();
+		
+		try {
+			System.out.println("Envoi de hello");
+			ControlMessage ctrlMsg= this.createControlMessageWithLocalID(this.listeningPort, "hello");
+			this.ManagerUDP.sendBroadcastedControlMessage(ctrlMsg);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
-	
-	
-	public void run(){
-			System.out.println("Démarrage comModule");
-			try {
-				System.out.println("Envoi de hello");
-				ControlMessage ctrlMsg= this.createControlMessageWithLocalID(15530, "hello");
-				this.ManagerUDP.sendBroadcastedControlMessage(ctrlMsg);
-				System.out.println("Fin envoi hello");
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		
-		while(true){
-
-		
-		}	
-	}
 	
 // ******************partie create***************************///
 	private void createManagerTCP(int id,InetAddress adr, int port) {//on peut mettre adr à null et port à 0
 	
-		if (adr==null){
+		if (adr==null){ //si adr==null c'est seulement pour créer un nouveau serveur
 			int reservedPort= listeningPort+ cptSocket;
 			ManagerTCP managerTCP = new ManagerTCP(this,reservedPort);
 			if (listeManagerTCP.containsKey(id)){
@@ -64,7 +54,7 @@ public class Communication extends Thread {
 			cptSocket++;
 		}
 		
-		else {
+		else {														//sinon c'est pour créer un nouveau client
 			ManagerTCP managerTCP = new ManagerTCP(this, adr,port);
 			if (listeManagerTCP.containsKey(id)){
 				listeManagerTCP.remove(id);
@@ -76,26 +66,32 @@ public class Communication extends Thread {
 
 
 
-	private int createNewUser(ControlMessage ctrlMsg) {
+	private int manageNewUser(ControlMessage ctrlMsg) {
 		int id=0;
-		if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){
+		if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){	//le nouvel utilisateur n'ecistait pas avant
 			
 			User newUser = new User(ctrlMsg.getUserName(),sysState.getSommetID(),ctrlMsg.getUserAdresse(),true);
+			System.out.println("nouveau User : " + newUser.toString());
 			sysState.allDests.addUser(newUser);
 			id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
 			
 		}
-		else {
+		else {															//le nouvel utilisateur existait déjà avant
 			id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
-			
-			sysState.allDests.getUser(id).setIP(ctrlMsg.getUserAdresse());
-			sysState.allDests.getUser(id).setStatus(true);
+			if (sysState.allDests.getUser(id).getStatus()){  //un utilisateur à ce nom est déjà connecté
+				System.out.println("!!!!!!!Il existe déjà un utilisateur nommé "+ctrlMsg.getUserName()+" !!!!!!!!!!");
+				id=-1;
+			}
+			else{
+				sysState.allDests.getUser(id).setIP(ctrlMsg.getUserAdresse());
+				sysState.allDests.getUser(id).setStatus(true);
+			}
 		}
 		return id;
 	}
 	
 	private ControlMessage createControlMessageWithLocalID(int localPort, String str){
-		String currentUser=sysState.getLoggedUser().getPseudo();
+		String currentUser=this.sysState.getLoggedUser().getPseudo();
 		InetAddress localAdr = null;
 		try {
 			localAdr = ToolsCom.getLocalHostLANAddress();
@@ -103,19 +99,18 @@ public class Communication extends Thread {
 			e1.printStackTrace();
 		}
 		ControlMessage ctrlMsgToSend= new ControlMessage(currentUser,localAdr,localPort,str);
-		
 		return ctrlMsgToSend;
 	}
 
 // ******************partie send***************************///
 
-	private void sendTxtMessage(String str, String destPseudo, String srcPseudo){
+	public void sendTxtMessage(String str,String srcPseudo, String destPseudo ){
 		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
 		int id= sysState.allDests.searchUserIDByPseudo(destPseudo);
 		this.listeManagerTCP.get(id).sendMessage(msg);
 	}
 	
-	private void sendFileMessage(File file, String destPseudo, String srcPseudo){
+	public void sendFileMessage(File file,String srcPseudo, String destPseudo){
 		int id= sysState.allDests.searchUserIDByPseudo(destPseudo);
 		this.listeManagerTCP.get(id).sendFile(file,destPseudo,srcPseudo);
 	}
@@ -127,43 +122,50 @@ public class Communication extends Thread {
 		int id =0;
 		String order=ctrlMsg.getData();
 		
-		if (order.equalsIgnoreCase("hello")){
+		
+		if (order.equalsIgnoreCase("hello")){ //on reçoit un message d'un explorateur
+			
 			System.out.println("Hello reçu");
-			System.out.println("Début création User et socketTCP");
 
-			id=this.createNewUser(ctrlMsg);
+			
+			id=this.manageNewUser(ctrlMsg);// on crée un nouvel utilisateur s'il n'existe pas déjà sinon on l'jaoute si l'ancien utilisateur est déco
 			//TODO faire le check de id=-1
+			
 			this.createManagerTCP(id,null,0);
 			int localPort=listeManagerTCP.get(id).getPort();
-			
-			System.out.println("Fin création User et socketTCP");
 
 			InetAddress destAdr= ctrlMsg.getUserAdresse();
 			int destPort =ctrlMsg.getPort();
-			
-			System.out.println("Début envoi ctrlMsg avec port");
 
 			ControlMessage ctrlMsgToSend = this.createControlMessageWithLocalID(localPort, "socket_created");
 			this.ManagerUDP.sendControlMessage(ctrlMsgToSend, destAdr,destPort);
-
-			System.out.println("Fin envoi ctrlMsg avec port");
+			
+			System.out.println("Fin Hello");
 
 		}
 
-		
+		//on a envoyé le Hello en prem's et on reçoit un datagram avec un port réservé
 		else if (order.equalsIgnoreCase("socket_created")){
 			
 			System.out.println("socket_created reçu");
 
-			if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){
-				id= this.createNewUser(ctrlMsg);
+			
+			if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){//l'utilisateur n'existe pas dans notre table allDests
+				id= this.manageNewUser(ctrlMsg);
 				this.createManagerTCP(id,ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
 			}
-			else {
+			else {															//l'utilisateur existe déjà dans notre table allDests
 				id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
-				sysState.allDests.getUser(id).setIP(ctrlMsg.getUserAdresse());
-				sysState.allDests.getUser(id).setStatus(true);
-				listeManagerTCP.get(id).setNewSocket(ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
+				if (!sysState.allDests.getUser(id).getIP().equals(ctrlMsg.getUserAdresse())){
+					if (!sysState.allDests.getUser(id).getStatus()){//
+						sysState.allDests.getUser(id).setIP(ctrlMsg.getUserAdresse());
+						sysState.allDests.getUser(id).setStatus(true);
+						listeManagerTCP.get(id).setNewClientSocket(ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
+					}
+					else {
+						System.out.println("!!!!!!! Deux utilisateurs avec le même nom !!!!!!!!!!!");
+					}
+				}
 			}	
 			System.out.println("Fin socket_created");
 
@@ -178,7 +180,8 @@ public class Communication extends Thread {
 			String srcPseudo= msg.getSrcPseudo();
 			int id= sysState.allDests.searchUserIDByPseudo(srcPseudo);
 			sysState.allDests.getUser(id).getConv().addMessage(msg);
-			controller.notifyNewMessage(id);
+			System.out.println("srcPseudo : "+srcPseudo+"Message : "+ msg.getData());
+			//controller.notifyNewMessage(id);
 			}
 	}
 		

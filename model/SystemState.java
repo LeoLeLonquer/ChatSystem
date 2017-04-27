@@ -3,6 +3,7 @@ package model;
 import java.net.*;
 
 import communication.Communication;
+import communication.ToolsCom;
 
 public class SystemState {
 // login
@@ -11,17 +12,24 @@ public class SystemState {
 //	private boolean isConnected ; 
 //	private Conv conv = new Conv(); 
 	
-	public static User loggedUser; 
+	public User loggedUser; 
 	public AllDests allDests; 
-	private Communication comModule;
-	int sommetID=1;
+	public Communication comModule;
+	int sommetID=0;
 
 	
 	public SystemState(String chosenName){
 	    // this name is chosen when the user fist logs in ; 
 		// a window should pop to let the user choose their name --> value transferred to LoggedUser
 		allDests = new AllDests(this); 
+		try {
+			this.loggedUser= new User(chosenName,0,ToolsCom.getLocalHostLANAddress(),true);
+		} catch (UnknownHostException e) {
+			System.out.println("Erreur à la création de loggedUser");
+			e.printStackTrace();
+		}
 		comModule=new Communication(this);
+
 	}
 	
 	private void setLoggedUser (String chosenName, int id) throws UnknownHostException {

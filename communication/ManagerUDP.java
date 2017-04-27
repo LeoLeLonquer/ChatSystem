@@ -15,13 +15,14 @@ public class ManagerUDP extends Thread{
 
 	public ManagerUDP(Communication comModule) throws SocketException{
 		this.comModule=comModule;
-		datagramSocket = new DatagramSocket(15530);
+		datagramSocket = new DatagramSocket(comModule.listeningPort);
 		receiveData = new byte[1024];
 		sendData = new byte[1024];
-		
-		this.start();
+		datagramSocket.setBroadcast(true);
+		start();
 	}
 	
+
 	
 	public  void sendControlMessage(ControlMessage ctrlMsgToSend, InetAddress destAdr, int destPort) {
 		sendData=ToolsCom.createDataArrayFromSerializedObject(ctrlMsgToSend);
@@ -34,10 +35,10 @@ public class ManagerUDP extends Thread{
 	}
 	
 	public void sendBroadcastedControlMessage(ControlMessage ctrlMsgToSend) throws IOException{
-		datagramSocket.setBroadcast(true);
 		InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
-		this.sendControlMessage(ctrlMsgToSend,broadcastAddress,15530);	
+		this.sendControlMessage(ctrlMsgToSend,broadcastAddress,comModule.listeningPort);
 		datagramSocket.setBroadcast(false);
+
 	}
 	
 	public void closeSocket(){
