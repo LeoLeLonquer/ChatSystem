@@ -2,6 +2,8 @@ package model;
 
 import java.net.*;
 
+import communication.Communication;
+
 public class SystemState {
 // login
 // disconnect 
@@ -9,7 +11,7 @@ public class SystemState {
 //	private boolean isConnected ; 
 //	private Conv conv = new Conv(); 
 	
-	static User loggedUser; 
+	public static User loggedUser; 
 	public AllDests allDests; 
 	private Communication comModule;
 	int sommetID=1;
@@ -27,6 +29,14 @@ public class SystemState {
 		loggedUser = new User(chosenName, id, IP, true) ; 
 	}
 	
+	
+	public User getLoggedUser(){
+		return this.loggedUser;
+	}
+	
+	public int getSommetID(){
+		return this.sommetID;
+	}
 
 	// m�thodes pour modif attribue
 	

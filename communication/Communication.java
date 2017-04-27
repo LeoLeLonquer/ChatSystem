@@ -1,18 +1,16 @@
-package model;
+package communication;
 
 import controller.Controller;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
-import model.Message.DataType;
+import communication.Message.DataType;
+import model.SystemState;
+import model.User;
 
 public class Communication extends Thread {
 	
@@ -37,9 +35,12 @@ public class Communication extends Thread {
 	
 	
 	public void run(){
-		
+			System.out.println("Démarrage comModule");
 			try {
-				this.ManagerUDP.sendBroadcast("hello");
+				System.out.println("Envoi de hello");
+				ControlMessage ctrlMsg= this.createControlMessageWithLocalID(15530, "hello");
+				this.ManagerUDP.sendBroadcastedControlMessage(ctrlMsg);
+				System.out.println("Fin envoi hello");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -50,36 +51,7 @@ public class Communication extends Thread {
 		}	
 	}
 	
-	private void sendTxtMessage(String str, String destPseudo, String srcPseudo){
-		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
-		int id= sysState.allDests.searchUserIDByPseudo(destPseudo);
-		this.listeManagerTCP.get(id).sendMessage(msg);
-	}
-	
-	private void sendFileMessage(File file, String destPseudo, String srcPseudo){
-		int id= sysState.allDests.searchUserIDByPseudo(destPseudo);
-		this.listeManagerTCP.get(id).sendFile(file,destPseudo,srcPseudo);
-	}
-
-	private void sendControlMessage(int localPort,InetAddress adr, int port , String str) {
-		String currentUser=SystemState.loggedUser.getPseudo();
-		String msg=str;
-		InetAddress localAdr = null;
-		try {
-			localAdr = ToolsCom.getLocalHostLANAddress();
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
-		}
-		
-		ControlMessage ctrlMsgToSend= new ControlMessage(currentUser,localAdr,localPort,msg);
-		try {
-			ManagerUDP.sendControlMessage(ctrlMsgToSend,adr,port);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	
+// ******************partie create***************************///
 	private void createManagerTCP(int id,InetAddress adr, int port) {//on peut mettre adr à null et port à 0
 	
 		if (adr==null){
@@ -108,7 +80,7 @@ public class Communication extends Thread {
 		int id=0;
 		if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){
 			
-			User newUser = new User(ctrlMsg.getUserName(),sysState.sommetID,ctrlMsg.getUserAdresse(),true);
+			User newUser = new User(ctrlMsg.getUserName(),sysState.getSommetID(),ctrlMsg.getUserAdresse(),true);
 			sysState.allDests.addUser(newUser);
 			id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
 			
@@ -121,26 +93,68 @@ public class Communication extends Thread {
 		}
 		return id;
 	}
+	
+	private ControlMessage createControlMessageWithLocalID(int localPort, String str){
+		String currentUser=sysState.getLoggedUser().getPseudo();
+		InetAddress localAdr = null;
+		try {
+			localAdr = ToolsCom.getLocalHostLANAddress();
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+		ControlMessage ctrlMsgToSend= new ControlMessage(currentUser,localAdr,localPort,str);
+		
+		return ctrlMsgToSend;
+	}
 
+// ******************partie send***************************///
 
+	private void sendTxtMessage(String str, String destPseudo, String srcPseudo){
+		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
+		int id= sysState.allDests.searchUserIDByPseudo(destPseudo);
+		this.listeManagerTCP.get(id).sendMessage(msg);
+	}
+	
+	private void sendFileMessage(File file, String destPseudo, String srcPseudo){
+		int id= sysState.allDests.searchUserIDByPseudo(destPseudo);
+		this.listeManagerTCP.get(id).sendFile(file,destPseudo,srcPseudo);
+	}
+
+	// ******************partie manage***************************///
+
+	
 	public void manageCtrlMsg(ControlMessage ctrlMsg) {
 		int id =0;
 		String order=ctrlMsg.getData();
 		
-		if (order.equalsIgnoreCase("hello")){			
+		if (order.equalsIgnoreCase("hello")){
+			System.out.println("Hello reçu");
+			System.out.println("Début création User et socketTCP");
+
 			id=this.createNewUser(ctrlMsg);
-			
+			//TODO faire le check de id=-1
 			this.createManagerTCP(id,null,0);
 			int localPort=listeManagerTCP.get(id).getPort();
 			
-			InetAddress adr= ctrlMsg.getUserAdresse();
-			int port =ctrlMsg.getPort();
-			this.sendControlMessage(localPort, adr,port,"socket_created");
+			System.out.println("Fin création User et socketTCP");
+
+			InetAddress destAdr= ctrlMsg.getUserAdresse();
+			int destPort =ctrlMsg.getPort();
+			
+			System.out.println("Début envoi ctrlMsg avec port");
+
+			ControlMessage ctrlMsgToSend = this.createControlMessageWithLocalID(localPort, "socket_created");
+			this.ManagerUDP.sendControlMessage(ctrlMsgToSend, destAdr,destPort);
+
+			System.out.println("Fin envoi ctrlMsg avec port");
+
 		}
 
 		
 		else if (order.equalsIgnoreCase("socket_created")){
 			
+			System.out.println("socket_created reçu");
+
 			if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){
 				id= this.createNewUser(ctrlMsg);
 				this.createManagerTCP(id,ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
@@ -150,8 +164,9 @@ public class Communication extends Thread {
 				sysState.allDests.getUser(id).setIP(ctrlMsg.getUserAdresse());
 				sysState.allDests.getUser(id).setStatus(true);
 				listeManagerTCP.get(id).setNewSocket(ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
-			}
-			
+			}	
+			System.out.println("Fin socket_created");
+
 		}
 	}
 	
@@ -179,6 +194,7 @@ public class Communication extends Thread {
 			controller.notifyNewMessage(id);
 			}		
 	}
+	
 
 
 }

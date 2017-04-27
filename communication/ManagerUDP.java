@@ -1,4 +1,4 @@
-package model;
+package communication;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -12,36 +12,32 @@ public class ManagerUDP extends Thread{
 	DatagramSocket datagramSocket;
 	byte[] receiveData;
 	byte[] sendData;
-	ControlMessage ctrlMsg;
 
 	public ManagerUDP(Communication comModule) throws SocketException{
 		this.comModule=comModule;
 		datagramSocket = new DatagramSocket(15530);
-		datagramSocket.setBroadcast(true);
 		receiveData = new byte[1024];
 		sendData = new byte[1024];
-		ctrlMsg=null;
+		
 		this.start();
 	}
 	
 	
-	public void sendBroadcast(String str) throws IOException{
-		InetAddress IPAddress = InetAddress.getByName("192.168.1.255");
-		sendData = str.getBytes();
-		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 15530);
-		datagramSocket.send(sendPacket);
-	}
-	
-	public  void sendString(InetAddress IPAddress,int port, String str) throws IOException{
-		sendData = str.getBytes();
-		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-		datagramSocket.send(sendPacket);
-	}
-	
-	public  void sendControlMessage(ControlMessage ctrlMsgToSend, InetAddress destAdr, int destPort) throws IOException{
+	public  void sendControlMessage(ControlMessage ctrlMsgToSend, InetAddress destAdr, int destPort) {
 		sendData=ToolsCom.createDataArrayFromSerializedObject(ctrlMsgToSend);
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, destAdr, destPort);
-		datagramSocket.send(sendPacket);
+		try {
+			datagramSocket.send(sendPacket);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendBroadcastedControlMessage(ControlMessage ctrlMsgToSend) throws IOException{
+		datagramSocket.setBroadcast(true);
+		InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
+		this.sendControlMessage(ctrlMsgToSend,broadcastAddress,15530);	
+		datagramSocket.setBroadcast(false);
 	}
 	
 	public void closeSocket(){
@@ -51,16 +47,21 @@ public class ManagerUDP extends Thread{
 	
 	public void run(){
 		while(true){
+			System.out.println("Début de réception de packet UDP");
 			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			try {
 				datagramSocket.receive(receivePacket);
+				System.out.println("Datagram UDP reçu");
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			System.out.println("Début gestion datagram UDP");
+			ControlMessage ctrlMsg= ToolsCom.createControlMessageFromData(receiveData);
 			
-			ctrlMsg= ToolsCom.createControlMessageFromData(receiveData);
+			comModule.manageCtrlMsg(ctrlMsg);	
+			System.out.println("Fin gestion datagram UDP");
 			
-			ctrlMsg.notify();	
 		}
 	}
 	

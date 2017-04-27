@@ -1,5 +1,7 @@
 package model;
 
+import communication.Message;
+
 public class ManageRemoteUsers {
 	
 	

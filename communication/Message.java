@@ -1,4 +1,4 @@
-package model;
+package communication;
 
 import java.io.Serializable;
 import java.net.Inet4Address;

@@ -1,9 +1,10 @@
-package model;
+package communication;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Created by FatePc on 3/25/2017.
@@ -15,14 +16,15 @@ public class ControlMessage implements Serializable {
     private int port;
     private String data;
 
-    public ControlMessage(String userName, InetAddress userAdresse, int port, String data) {
+    
+    //constructeur universel
+    public ControlMessage(String userName, InetAddress userAdresse, int port, String data) { 
         this.userName = userName;
         this.userAdresse = userAdresse;
         this.port = port;
         this.data = data;
     }
     
-
     public String getUserName() {
         return userName;
     }

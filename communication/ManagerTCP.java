@@ -1,31 +1,26 @@
-package model;
+package communication;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import model.Message.DataType;
+import communication.Message.DataType;
 
 
 
 public class ManagerTCP extends Thread{
 	ServerSocket serverSocks;
 	Socket clientSocks; 
-
 	int port ;
-
 	Communication comModule;
 
 	private ObjectOutputStream writer;
@@ -33,7 +28,7 @@ public class ManagerTCP extends Thread{
 
 	int type;
 
-	public ManagerTCP(Communication comMudule, int port){ //permet de créer un serveurTCP qui créera ensuite un clientTCP
+	public ManagerTCP(Communication comModule, int port){ //permet de créer un serveurTCP qui créera ensuite un clientTCP
 		this.comModule=comModule;
 		this.port=port;
 		try {
@@ -47,7 +42,7 @@ public class ManagerTCP extends Thread{
 	}
 
 
-	public ManagerTCP(Communication comMudule, InetAddress IP, int port) { //permet de créer un clientTCP
+	public ManagerTCP(Communication comModule, InetAddress IP, int port) { //permet de créer un clientTCP
 		this.comModule=comModule;
 		this.port=port;
 		this.type=2;
@@ -113,7 +108,8 @@ public class ManagerTCP extends Thread{
 
 	public void setNewSocket(InetAddress IP, int port) {
 		try {
-			clientSocks= new Socket(IP,port);
+			this.port=port;
+			this.clientSocks= new Socket(IP,port);
 			writer = new ObjectOutputStream(clientSocks.getOutputStream());
 			reader = new ObjectInputStream(clientSocks.getInputStream());
 		} catch (IOException e) {
