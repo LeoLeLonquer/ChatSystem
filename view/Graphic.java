@@ -1,10 +1,14 @@
 package view;
 
 import java.awt.*;
+import javax.swing.UIManager.*;
+
 import java.util.*;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import java.applet.Applet;
@@ -33,8 +37,9 @@ public class Graphic extends Applet {
     
     protected void makeTextArea(String name,
             GridBagLayout gridbag,
-            GridBagConstraints c) {
+            GridBagConstraints c, boolean editable) {
 JTextArea text = new JTextArea(name);
+text.setEditable(editable);
 gridbag.setConstraints(text, c);
 add(text);
 }
@@ -47,6 +52,7 @@ gridbag.setConstraints(label, c);
 add(label);
 }
 
+
     public void init() {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -54,55 +60,69 @@ add(label);
         setFont(new Font("SansSerif", Font.PLAIN, 25));
         setLayout(gridbag);
 
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
+//        c.fill = GridBagConstraints.BOTH;
+//        c.weightx = 1.0;
 //        makebutton("Button1", gridbag, c);
 //        makebutton("Button2", gridbag, c);
 //        makebutton("Button3", gridbag, c);
-        c.gridwidth = GridBagConstraints.REMAINDER; //end row
-        //label
-        makeLabel("Conversation with ", gridbag, c);
-
-        c.weightx = 0.0;                //reset to the default
-//        makebutton("Button5", gridbag, c); //another row
-//
-//        c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last in row
-//        makebutton("Button6", gridbag, c);
-//
 //        c.gridwidth = GridBagConstraints.REMAINDER; //end row
-//        makebutton("Button7", gridbag, c);
+        
+        //label to say who ure talking to 
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;        
+        c.weightx = 1;
+        makeLabel("Conversation with ", gridbag, c);
+        
+        // the list of users, in a list of scrollable buttons 
+        //TODO: make it scrollable lol 
+ //       GridLayout gr = new GridLayout(0, 1); // gridlayout panel pour la liste des users(si on met 0 pour le nb de lignes, 
+        //il en fait autant que nécessaire
+        ListUsers listUsers = new ListUsers(); 
+        c.gridx = 0;
+        c.gridy = 1;
+       // c.fill = GridBagConstraints.BOTH;
+        c.weightx = 0;
+        c.weighty = 8; 
+//        c.gridwidth= 1; 
+        gridbag.setConstraints(listUsers, c);
+        gridbag.addLayoutComponent(listUsers, c);
 
-        c.gridwidth = 1;                //reset to the default
-        c.gridheight = 1;
-//        c.weighty = 1.0;
-        makeLabel("List Users", gridbag, c);
         
         //text convo
-        c.weighty = 1.0;
-        c.gridwidth = GridBagConstraints.REMAINDER; 
-        c.gridheight = 7; 
-        makeTextArea("text convo", gridbag, c);
+        c.weighty = 7;
+        c.weightx = 7; 
+        c.fill = GridBagConstraints.BOTH ; 
+        c.gridx = 1;
+        c.gridy = 1;
+        makeTextArea("text convo", gridbag, c, false);
         
-        c.gridwidth= 1; 
-        c.gridheight = GridBagConstraints.REMAINDER; 
-        c.weighty=1.0; 
-        makebutton("List Users", gridbag, c); // to replace with an actual list lol 
+        // text area to write your msg
+        c.weighty=0.8;
+        c.weightx= 0.7; 
+        c.fill = GridBagConstraints.BOTH; 
+        c.gridx = 1;
+        c.gridy = 2;
+        makeTextArea("msg to send", gridbag, c, true); 
 
-        c.weightx = 1.0; 
-        c.gridwidth = GridBagConstraints.RELATIVE; 
-        c.gridheight= 2; 
-        makeTextArea("msg to send", gridbag, c); 
-
-        c.weighty = 0.0;                //reset to the default
-        c.gridwidth = GridBagConstraints.REMAINDER; //end row
-        c.gridheight = 1;               //reset to the default
+        // button to send your message
+        c.ipady = 0;       //reset to default
+        c.weighty = 1.0;   //request any extra vertical space
+        c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+        c.insets = new Insets(10,0,0,0);  //top padding
+        c.gridx = 2;       //aligned with button 2
+        c.gridwidth = 1;   
+        c.gridheight=1; 
+        c.gridy = 2;       //third row
+        c.weighty = 0.1;                //reset to the default
         makebutton("Send", gridbag, c);
 
         setSize(300, 100);
     }
 
     public static void main(String args[]) {
-        Frame f = new Frame("GridBag Layout Example");
+        Frame f = new Frame("ChatSystem");
         Graphic ex1 = new Graphic();
 
         ex1.init();
