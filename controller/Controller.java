@@ -17,10 +17,34 @@ public class Controller {
 		
 	}
 	
+	//***************interface model-Controller************************
 	
-	public void notifyNewMessage(int id) {
+	public void notifyNewMessageFromModel(int id) {
 		
 	}
+	
+	
+	
+	//**************************************************************
+	
+	//***************interface view-Controller************************
+	
+	public void sendMessage(int id){
+		
+	}
+	
+	
+	public void sendFile(int id){
+		
+	}
+	
+	public void askConv(int id){
+		
+	}
+	
+
+
+	
 	
 	
 }

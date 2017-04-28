@@ -72,22 +72,26 @@ public class ManagerTCP extends Thread{
 					comModule.manageTxtMessage(receivedMsg);
 				}
 				else if (receivedMsg.getType()==DataType.File){
-
-					//le premier message contient le nom du fichier
-
+					// TODO demande-t-on à l'utilisateur s'il veut télécharger le fichier ?
+					
+					
+					
 					Message msgWithFileLength = (Message) reader.readObject();
-					int length = Integer.parseInt(msgWithFileLength.getData());
-
-					String path=System.getProperty("user.dir") + "/" + receivedMsg.getData();
-					OutputStream receivedFile = new FileOutputStream(path);
-					InputStream input = clientSocks.getInputStream();
+					int length = Integer.parseInt(msgWithFileLength.getData());//le deuxième message contient la taille totale du fichier
+					
+					//le message est enregistré dans le dossier courant de l'utilisateur
+					String path=System.getProperty("user.dir") + "/" + receivedMsg.getData();//le premier message contient le nom du fichier
+					
+					OutputStream receivedFile = new FileOutputStream(path);//fichier buffer 
+					InputStream input = clientSocks.getInputStream();//entrée des fichiers 
 
 					byte[] bytes = new byte[16*1024];
-					int cptSize = 0;
-					int count = 0;
-					while (cptSize < length && (count = input.read(bytes)) > 0) {
+					int fileSize = 0;
+					int count = input.read(bytes); //lecture du paquet TCP et enregistré dans bytes
+					while (fileSize < length && count > 0) {
 						receivedFile.write(bytes, 0, count);
-						cptSize += count;
+						fileSize += count;
+						count=input.read(bytes);
 					}
 					receivedFile.close();
 
@@ -138,19 +142,24 @@ public class ManagerTCP extends Thread{
 
 	public void sendFile(File file ,String destPseudo,String srcPseudo){
 		try {
+			//le premier message contient le nom du fichier
 			Message msgWithName = new Message(DataType.File, file.getName(),destPseudo, srcPseudo);
 			this.sendMessage(msgWithName);
 
+			//le deuxième message contient la taille totale du fichier
 			Message msgWithFileLength = new Message(DataType.File, file.length() + "", destPseudo, srcPseudo);
 			this.sendMessage(msgWithFileLength);
 
-			byte[] bytes = new byte[16 * 1024];
+			byte[] bytes = new byte[16 * 1024];//16*1024 = taille max des paquets TCP
 			InputStream in = new FileInputStream(file);
 			OutputStream out = clientSocks.getOutputStream();
 
 			int cpt;
-			while ((cpt = in.read(bytes)) > 0) {
+			cpt = in.read(bytes); //lecture du fichier et enregistrement dans bytes
+			
+			while (cpt > 0) {
 				out.write(bytes, 0, cpt);
+				cpt = in.read(bytes);
 			}
 
 			out.flush();
@@ -169,6 +178,7 @@ public class ManagerTCP extends Thread{
 	public void close(){
 		try {
 			this.clientSocks.close();
+			this.serverSocks.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

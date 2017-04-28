@@ -90,7 +90,7 @@ public class Communication {
 		return id;
 	}
 	
-	private ControlMessage createControlMessageWithLocalID(int localPort, String str){
+	public ControlMessage createControlMessageWithLocalID(int localPort, String str){
 		String currentUser=this.sysState.getLoggedUser().getPseudo();
 		InetAddress localAdr = null;
 		try {
@@ -104,6 +104,8 @@ public class Communication {
 
 // ******************partie send***************************///
 
+	
+	
 	public void sendTxtMessage(String str,String srcPseudo, String destPseudo ){
 		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
 		int id= sysState.allDests.searchUserIDByPseudo(destPseudo);
@@ -157,7 +159,8 @@ public class Communication {
 			else {															//l'utilisateur existe déjà dans notre table allDests
 				id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
 				if (!sysState.allDests.getUser(id).getIP().equals(ctrlMsg.getUserAdresse())){
-					if (!sysState.allDests.getUser(id).getStatus()){//
+					if (!sysState.allDests.getUser(id).getStatus()){//si l'utilisateur est déconnecté, mettre à jour
+						
 						sysState.allDests.getUser(id).setIP(ctrlMsg.getUserAdresse());
 						sysState.allDests.getUser(id).setStatus(true);
 						listeManagerTCP.get(id).setNewClientSocket(ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
@@ -169,6 +172,11 @@ public class Communication {
 			}	
 			System.out.println("Fin socket_created");
 
+		}
+		else if (order.equalsIgnoreCase("bye")){//un utilisateur se déconnecte
+			id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
+			this.listeManagerTCP.get(id).close();
+			this.sysState.allDests.getUser(id).setStatus(false);
 		}
 	}
 	
@@ -194,7 +202,7 @@ public class Communication {
 			
 			int id= sysState.allDests.searchUserIDByPseudo(srcPseudo);
 			sysState.allDests.getUser(id).getConv().addMessage(msg);
-			controller.notifyNewMessage(id);
+			controller.notifyNewMessageFromModel(id);
 			}		
 	}
 	
