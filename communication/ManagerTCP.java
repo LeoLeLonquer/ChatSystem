@@ -19,7 +19,7 @@ import communication.Message.DataType;
 
 public class ManagerTCP extends Thread{
 	ServerSocket serverSocks;
-	Socket clientSocks; 
+	public Socket clientSocks; 
 	int port ;
 	boolean connected;
 	Communication comModule;
@@ -68,7 +68,7 @@ public class ManagerTCP extends Thread{
 			e.printStackTrace();
 		}
 
-		while(connected){
+		while(!connected){
 			try {
 				Message receivedMsg= (Message) reader.readObject();
 

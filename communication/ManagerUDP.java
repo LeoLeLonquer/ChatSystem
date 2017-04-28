@@ -22,7 +22,26 @@ public class ManagerUDP extends Thread{
 		start();
 	}
 	
+	public void run(){
+		while(true){
+			System.out.println("Début de réception de packet UDP");
+			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+			try {
+				datagramSocket.receive(receivePacket);
+				System.out.println("Datagram UDP reçu");
 
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Début gestion datagram UDP");
+			ControlMessage ctrlMsg= ToolsCom.createControlMessageFromData(receiveData);
+			
+			comModule.manageCtrlMsg(ctrlMsg);	
+			System.out.println("Fin gestion datagram UDP");
+			
+		}
+	}
+	
 	
 	public  void sendControlMessage(ControlMessage ctrlMsgToSend, InetAddress destAdr, int destPort) {
 		sendData=ToolsCom.createDataArrayFromSerializedObject(ctrlMsgToSend);
@@ -45,25 +64,5 @@ public class ManagerUDP extends Thread{
 		datagramSocket.close();
 	}
 	
-	
-	public void run(){
-		while(true){
-			System.out.println("Début de réception de packet UDP");
-			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-			try {
-				datagramSocket.receive(receivePacket);
-				System.out.println("Datagram UDP reçu");
 
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Début gestion datagram UDP");
-			ControlMessage ctrlMsg= ToolsCom.createControlMessageFromData(receiveData);
-			
-			comModule.manageCtrlMsg(ctrlMsg);	
-			System.out.println("Fin gestion datagram UDP");
-			
-		}
-	}
-	
 }

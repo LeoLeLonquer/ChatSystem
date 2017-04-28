@@ -1,6 +1,7 @@
 package communication;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
 
 import model.SystemState;
@@ -36,10 +37,8 @@ public class TestCommunication extends Thread{
 			System.out.println("tentative de fermeture");
 
 			int id=this.sysState.allDests.searchUserIDByPseudo("yoyo");
-			int port=this.sysState.comModule.listeManagerTCP.get(id).getPort();
-			this.sysState.comModule.createControlMessageWithLocalID(port, "bye");
-
-			this.sysState.comModule.listeManagerTCP.get(id).close();
+			
+			//this.sysState.comModule.closeDiscussion(id);
 
 			System.out.println("fin tentatice de fermeture");
 

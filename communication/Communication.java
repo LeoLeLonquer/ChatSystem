@@ -104,7 +104,12 @@ public class Communication {
 
 // ******************partie send***************************///
 
-	
+	public void closeDiscussion(int id){
+		InetAddress adr=this.sysState.comModule.listeManagerTCP.get(id).clientSocks.getInetAddress();
+		ControlMessage ctrlMsgToSend=this.sysState.comModule.createControlMessageWithLocalID(this.listeningPort, "bye");
+		this.sysState.comModule.ManagerUDP.sendControlMessage(ctrlMsgToSend, adr, this.listeningPort);
+		this.sysState.comModule.listeManagerTCP.get(id).close();
+	}
 	
 	public void sendTxtMessage(String str,String srcPseudo, String destPseudo ){
 		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
