@@ -21,8 +21,9 @@ public class ManagerTCP extends Thread{
 	ServerSocket serverSocks;
 	Socket clientSocks; 
 	int port ;
+	boolean connected;
 	Communication comModule;
-
+	
 	private ObjectOutputStream writer;
 	private ObjectInputStream reader;
 
@@ -31,6 +32,7 @@ public class ManagerTCP extends Thread{
 	public ManagerTCP(Communication comModule, int port){ //permet de créer un serveurTCP qui créera ensuite un clientTCP
 		this.comModule=comModule;
 		this.port=port;
+		this.connected=false;
 		try {
 			this.type=1;
 			serverSocks= new ServerSocket(port);
@@ -46,6 +48,7 @@ public class ManagerTCP extends Thread{
 		this.comModule=comModule;
 		this.port=port;
 		this.type=2;
+		this.connected=true;
 		try {
 			clientSocks= new Socket(IP,port);
 		} catch (IOException e) {
@@ -58,13 +61,14 @@ public class ManagerTCP extends Thread{
 		try {
 			if (type==1)
 				clientSocks = serverSocks.accept();
-			writer = new ObjectOutputStream(clientSocks.getOutputStream());
-			reader = new ObjectInputStream(clientSocks.getInputStream());
+				this.connected=true;
+				writer = new ObjectOutputStream(clientSocks.getOutputStream());
+				reader = new ObjectInputStream(clientSocks.getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		while(true){
+		while(connected){
 			try {
 				Message receivedMsg= (Message) reader.readObject();
 
@@ -177,8 +181,11 @@ public class ManagerTCP extends Thread{
 	
 	public void close(){
 		try {
+			this.connected=false;
 			this.clientSocks.close();
-			this.serverSocks.close();
+			if (this.type==1){
+				this.serverSocks.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
