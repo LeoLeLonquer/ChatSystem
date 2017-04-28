@@ -1,5 +1,6 @@
 package communication;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import model.SystemState;
@@ -30,15 +31,22 @@ public class TestCommunication extends Thread{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			while(true){
-				try {
-					TimeUnit.SECONDS.sleep(2);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				System.out.println("Envoi message TCP");
-				sysState.comModule.sendTxtMessage("Coucou","toto","yoyo");
-			}
+			System.out.println("Envoi Filemessage TCP");
+
+			File file = new File("~/Bureau/fileToSend.txt");
+			sysState.comModule.sendFileMessage(file,"toto","yoyo");
+
+			
+			
+//			while(true){
+//				try {
+//					TimeUnit.SECONDS.sleep(2);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//				System.out.println("Envoi message TCP");
+//				sysState.comModule.sendTxtMessage("Coucou","toto","yoyo");
+//			}
 		//}
 	}
 }

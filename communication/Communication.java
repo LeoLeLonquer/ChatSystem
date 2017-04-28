@@ -194,7 +194,7 @@ public class Communication {
 			
 			int id= sysState.allDests.searchUserIDByPseudo(srcPseudo);
 			sysState.allDests.getUser(id).getConv().addMessage(msg);
-			controller.notifyNewMessage(id);
+			controller.notifyNewMessageFromModel(id);
 			}		
 	}
 	

@@ -169,6 +169,7 @@ public class ManagerTCP extends Thread{
 	public void close(){
 		try {
 			this.clientSocks.close();
+			this.serverSocks.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
