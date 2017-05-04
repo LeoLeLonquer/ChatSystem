@@ -45,6 +45,7 @@ public class Communication {
 	private void createManagerTCP(int id,InetAddress adr, int port) {//on peut mettre adr à null et port à 0
 	
 		if (adr==null){ //si adr==null c'est seulement pour créer un nouveau serveur
+			System.out.println("!!!!!!!!!!!!!Serveur créé!!!!!!!!!!!!!");
 			int reservedPort= listeningPort+ cptSocket;
 			ManagerTCP managerTCP = new ManagerTCP(this,reservedPort);
 			if (listeManagerTCP.containsKey(id)){
@@ -55,6 +56,7 @@ public class Communication {
 		}
 		
 		else {														//sinon c'est pour créer un nouveau client
+			System.out.println("!!!!!!!!!!!!!client créé!!!!!!!!!!!!!");
 			ManagerTCP managerTCP = new ManagerTCP(this, adr,port);
 			if (listeManagerTCP.containsKey(id)){
 				listeManagerTCP.remove(id);

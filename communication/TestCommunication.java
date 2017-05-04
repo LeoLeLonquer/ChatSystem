@@ -24,7 +24,7 @@ public class TestCommunication extends Thread{
 		System.out.println("start");
 		//while(true){
 			try {
-				TimeUnit.SECONDS.sleep(2);
+				TimeUnit.SECONDS.sleep(7);
 				System.out.println("*********Liste des utilisateurs connectés*******");
 				System.out.print(this.sysState.allDests.toString());
 				System.out.println("************************************************");
@@ -34,13 +34,16 @@ public class TestCommunication extends Thread{
 			}
 
 
-			System.out.println("tentative de fermeture");
-
-			int id=this.sysState.allDests.searchUserIDByPseudo("yoyo");
+			System.out.println("Envoi message TCP");
+			sysState.comModule.sendTxtMessage("Coucou","toto","yoyo");
 			
-			//this.sysState.comModule.closeDiscussion(id);
-
-			System.out.println("fin tentatice de fermeture");
+//			System.out.println("tentative de fermeture");
+//
+//			int id=this.sysState.allDests.searchUserIDByPseudo("yoyo");
+//			
+//			//this.sysState.comModule.closeDiscussion(id);
+//
+//			System.out.println("fin tentatice de fermeture");
 
 
 

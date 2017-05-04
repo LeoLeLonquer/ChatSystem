@@ -23,7 +23,7 @@ public class ManagerTCP extends Thread{
 	int port ;
 	boolean connected;
 	Communication comModule;
-	
+
 	private ObjectOutputStream writer;
 	private ObjectInputStream reader;
 
@@ -48,9 +48,11 @@ public class ManagerTCP extends Thread{
 		this.comModule=comModule;
 		this.port=port;
 		this.type=2;
-		this.connected=true;
 		try {
-			clientSocks= new Socket(IP,port);
+			this.serverSocks=null;
+			this.clientSocks= new Socket(IP,port);
+			this.connected=true;
+			writer = new ObjectOutputStream(this.clientSocks.getOutputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -59,16 +61,27 @@ public class ManagerTCP extends Thread{
 
 	public void run(){
 		try {
-			if (type==1)
+			if (type==1 ){
 				clientSocks = serverSocks.accept();
 				this.connected=true;
 				writer = new ObjectOutputStream(clientSocks.getOutputStream());
 				reader = new ObjectInputStream(clientSocks.getInputStream());
+			}	
+			else if (type==2){
+				int flag=0;
+				while(flag==0){
+					if(this.clientSocks.getInputStream().available()>0){
+						reader = new ObjectInputStream(this.clientSocks.getInputStream());
+						flag=1;
+					}
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		while(!connected){
+
+		while(connected){
 			try {
 				Message receivedMsg= (Message) reader.readObject();
 
@@ -77,15 +90,15 @@ public class ManagerTCP extends Thread{
 				}
 				else if (receivedMsg.getType()==DataType.File){
 					// TODO demande-t-on à l'utilisateur s'il veut télécharger le fichier ?
-					
-					
-					
+
+
+
 					Message msgWithFileLength = (Message) reader.readObject();
 					int length = Integer.parseInt(msgWithFileLength.getData());//le deuxième message contient la taille totale du fichier
-					
+
 					//le message est enregistré dans le dossier courant de l'utilisateur
 					String path=System.getProperty("user.dir") + "/" + receivedMsg.getData();//le premier message contient le nom du fichier
-					
+
 					OutputStream receivedFile = new FileOutputStream(path);//fichier buffer 
 					InputStream input = clientSocks.getInputStream();//entrée des fichiers 
 
@@ -113,7 +126,7 @@ public class ManagerTCP extends Thread{
 		}
 	}
 
-	
+
 	public void setNewClientSocket(InetAddress IP, int port) {
 		try {
 			this.port=port;
@@ -128,7 +141,7 @@ public class ManagerTCP extends Thread{
 
 	public void sendMessage(Message msg){
 		try {
-			writer.writeObject(msg);
+			writer.writeObject((Message)msg);
 			System.out.println("Message envoyé !");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -160,7 +173,7 @@ public class ManagerTCP extends Thread{
 
 			int cpt;
 			cpt = in.read(bytes); //lecture du fichier et enregistrement dans bytes
-			
+
 			while (cpt > 0) {
 				out.write(bytes, 0, cpt);
 				cpt = in.read(bytes);
@@ -178,10 +191,11 @@ public class ManagerTCP extends Thread{
 	public int getPort() {
 		return this.port;
 	}
-	
+
 	public void close(){
 		try {
 			this.connected=false;
+			this.interrupt();
 			this.clientSocks.close();
 			if (this.type==1){
 				this.serverSocks.close();
