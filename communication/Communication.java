@@ -66,31 +66,6 @@ public class Communication {
 		}
 	}
 
-
-
-	private int manageNewUser(ControlMessage ctrlMsg) {
-		int id=0;
-		if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){	//le nouvel utilisateur n'ecistait pas avant
-			
-			User newUser = new User(ctrlMsg.getUserName(),sysState.getSommetID(),ctrlMsg.getUserAdresse(),true);
-			System.out.println("nouveau User : " + newUser.toString());
-			sysState.allDests.addUser(newUser);
-			id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
-			
-		}
-		else {															//le nouvel utilisateur existait déjà avant
-			id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
-			if (sysState.allDests.getUser(id).getStatus()){  //un utilisateur à ce nom est déjà connecté
-				System.out.println("!!!!!!!Il existe déjà un utilisateur nommé "+ctrlMsg.getUserName()+" !!!!!!!!!!");
-				id=-1;
-			}
-			else{
-				sysState.allDests.getUser(id).setIP(ctrlMsg.getUserAdresse());
-				sysState.allDests.getUser(id).setStatus(true);
-			}
-		}
-		return id;
-	}
 	
 	public ControlMessage createControlMessageWithLocalID(int localPort, String str){
 		String currentUser=this.sysState.getLoggedUser().getPseudo();
@@ -115,12 +90,12 @@ public class Communication {
 	
 	public void sendTxtMessage(String str,String srcPseudo, String destPseudo ){
 		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
-		int id= sysState.allDests.searchUserIDByPseudo(destPseudo);
+		int id= sysState.allDests.getUserID(destPseudo);
 		this.listeManagerTCP.get(id).sendMessage(msg);
 	}
 	
 	public void sendFileMessage(File file,String srcPseudo, String destPseudo){
-		int id= sysState.allDests.searchUserIDByPseudo(destPseudo);
+		int id= sysState.allDests.getUserID(destPseudo);
 		this.listeManagerTCP.get(id).sendFile(file,destPseudo,srcPseudo);
 	}
 
@@ -137,7 +112,7 @@ public class Communication {
 			System.out.println("Hello reçu");
 
 			
-			id=this.manageNewUser(ctrlMsg);// on crée un nouvel utilisateur s'il n'existe pas déjà sinon on l'jaoute si l'ancien utilisateur est déco
+			id=this.sysState.manageNewUser(ctrlMsg);// on crée un nouvel utilisateur s'il n'existe pas déjà sinon on l'jaoute si l'ancien utilisateur est déco
 			//TODO faire le check de id=-1
 			
 			this.createManagerTCP(id,null,0);
@@ -160,11 +135,11 @@ public class Communication {
 
 			
 			if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){//l'utilisateur n'existe pas dans notre table allDests
-				id= this.manageNewUser(ctrlMsg);
+				id= this.sysState.manageNewUser(ctrlMsg);
 				this.createManagerTCP(id,ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
 			}
 			else {															//l'utilisateur existe déjà dans notre table allDests
-				id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
+				id=ctrlMsg.getUserName().hashCode();
 				if (!sysState.allDests.getUser(id).getIP().equals(ctrlMsg.getUserAdresse())){
 					if (!sysState.allDests.getUser(id).getStatus()){//si l'utilisateur est déconnecté, mettre à jour
 						
@@ -181,7 +156,7 @@ public class Communication {
 
 		}
 		else if (order.equalsIgnoreCase("bye")){//un utilisateur se déconnecte
-			id=sysState.allDests.searchUserIDByPseudo(ctrlMsg.getUserName());
+			id=sysState.allDests.getUserID(ctrlMsg.getUserName());
 			this.listeManagerTCP.get(id).close();
 			this.sysState.allDests.getUser(id).setStatus(false);
 		}
@@ -193,9 +168,9 @@ public class Communication {
 		
 		if (msg.getType()==Message.DataType.Text){
 			String srcPseudo= msg.getSrcPseudo();
-			int id= sysState.allDests.searchUserIDByPseudo(srcPseudo);
+			int id= sysState.allDests.getUserID(srcPseudo);
 			sysState.allDests.getUser(id).getConv().addMessage(msg);
-			System.out.println("srcPseudo : "+srcPseudo+"Message : "+ msg.getData());
+			System.out.println("srcPseudo : "+srcPseudo+" Message : "+ msg.getData());
 			//controller.notifyNewMessage(id);
 			}
 	}
@@ -207,7 +182,7 @@ public class Communication {
 			String srcPseudo= receivedMsg.getSrcPseudo();
 			Message msg= new Message(DataType.File,path,receivedMsg.getDestPseudo(),srcPseudo);
 			
-			int id= sysState.allDests.searchUserIDByPseudo(srcPseudo);
+			int id= sysState.allDests.getUserID(srcPseudo);
 			sysState.allDests.getUser(id).getConv().addMessage(msg);
 			controller.notifyNewMessageFromModel(id);
 			}		

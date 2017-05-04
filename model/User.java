@@ -4,15 +4,13 @@ import java.net.InetAddress;
 
 public class User implements Dest{
 	private String pseudo;
-	private int id; 
 	private InetAddress  IP;
 	private boolean isConnected ;
 	private Conv conversation; 
 
 	
-	public User(String pseudo,int id, InetAddress  IP, boolean isConnected){
+	public User(String pseudo, InetAddress  IP, boolean isConnected){
 		this.pseudo=pseudo;
-		this.id = id; 
 		this.IP=IP;
 		this.isConnected=isConnected;
 		conversation = new Conv(); 
@@ -22,8 +20,8 @@ public class User implements Dest{
 		return this.pseudo; 
 	}
 	
-	public int getID () {
-		return this.id; 
+	public int getUserID () {
+		return pseudo.hashCode(); 
 	}
 	
 	public InetAddress getIP (){
@@ -59,7 +57,7 @@ public class User implements Dest{
 		else {
 			status = " is disconnected"; 
 		}
-		return ("Pseudo : " + this.pseudo + " | id : " + this.id + " | IP : "+ this.IP.toString() + " | Status : " + status); 
+		return ("Pseudo : " + this.pseudo + " | id : " + this.getUserID() + " | IP : "+ this.IP.toString() + " | Status : " + status); 
 	}
 
 }

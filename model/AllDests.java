@@ -39,8 +39,7 @@ public class AllDests {
 	}
 	
 	public void addUser(User us) { 
-		this.ListUsers.put(us.getID(), us) ;
-		sysState.sommetID++;
+		this.ListUsers.put(us.getUserID(), us) ;
 	}
 
 	public void addGroup(Groupe group) {
@@ -59,24 +58,13 @@ public class AllDests {
 		return this.ListUsers.get(id);
 	}
 	
-	public int searchUserIDByIP(Inet4Address IP){ 
-		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
-			User us = this.ListUsers.get(it.next()); 
-			if( us.getIP().equals(IP)) { 
-				return us.getID(); 
+	public int getUserID(String pseudo){
+		if (ListUsers.containsKey(pseudo.hashCode())){
+			return pseudo.hashCode();
 			}
+		else {
+			return -1; 
 		}
-		return -1; 
-	}
-	
-	public int searchUserIDByPseudo(String pseudo){
-		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
-			User us = this.ListUsers.get(it.next()); 
-			if( us.getPseudo().equals(pseudo)) { 
-				return us.getID(); 
-			}
-		}
-		return -1; 
 	}
 	
 	public Groupe searchGroup(int id){ 
@@ -84,7 +72,7 @@ public class AllDests {
 	}
 	
 	public boolean checkAvailable (String pseudo) {
-		if (this.searchUserIDByPseudo(pseudo)!=-1)
+		if (this.getUserID(pseudo)!=-1)
 			return false;
 		else 
 			return true; 
