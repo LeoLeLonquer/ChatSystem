@@ -4,49 +4,47 @@ import java.awt.event.*;
 import java.io.*; 
 import javax.swing.*;
 
+import model.User;
+
 public class ListUsers extends JFrame implements ActionListener {
 	
 	 private JLabel listUs;
-
-	 // a button to perform an action: e.g. say hello (TBD) */
 	 private JButton userExample;
-	 
+	 private User current; 
+	 private boolean alreadyTalking = false; 
 
-	public ListUsers(){ 
+	public ListUsers(User current){ 
+		this.current=current; 
 		 initComponents();
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource()==userExample && !alreadyTalking){
+			alreadyTalking = true; 
+			Graphic g = new Graphic(); 
+		}
 	}
 	 private void initComponents() {
-	 // create the components
-	 // a new label with the "Nom" as value
 	 listUs = new JLabel("Connected Users:"); 
 	 userExample = new JButton("user1"); 
-	 userExample.addActionListener(this); 
 	 
+	 // TODO: will use AllDests to display all connected users? 
+	 
+	 userExample.addActionListener(this); 
 
 	 // configures the JFrame layout using a grid layout
 	 this.setLayout(new GridLayout(0,1));
-	 // places the components in the layout
 	 this.add(listUs); 
 	 this.add(userExample);
-
-
+	 this.setTitle("Welcome " + current.getPseudo(current)); 
 	 
 	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; // pcq par défaut est en mode 
-	 //hide_on_close ce qui ne tue pas le processus... 
 	 
-//	  le thread de reception de mesg 
-//		ThreadsReceive t = new ThreadsReceive ("receive", reader, writer, msgRcv) ; 
-//		t.start(); 
-
 	 // packs the fenetre: size is calculated
-	 // regarding the added components
-	 this.pack();
+//	 this.pack();
+	 this.setSize(300, 750);
+     this.setLocation(100, 20);
 	 // the JFrame is visible now
 	 this.setVisible(true);
 	 }
