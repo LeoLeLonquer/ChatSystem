@@ -2,9 +2,10 @@ package model;
 
 import java.net.*;
 
-import communication.Communication;
-import communication.ControlMessage;
-import communication.ToolsCom;
+import network.Communication;
+import network.ControlMessage;
+import network.ToolsCom;
+
 
 public class SystemState {
 // login

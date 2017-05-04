@@ -3,8 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import communication.Message;
-import communication.Message.DataType;
+import network.Message;
+import network.Message.DataType;
+
 
 
 public class Conv {

@@ -1,6 +1,6 @@
 package model;
 
-import communication.Message;
+import network.Message;
 
 public class ManageRemoteUsers {
 	
