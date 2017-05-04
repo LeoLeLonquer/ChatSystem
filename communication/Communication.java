@@ -81,11 +81,14 @@ public class Communication {
 
 // ******************partie send***************************///
 
-	public void closeDiscussion(int id){
-		InetAddress adr=this.sysState.comModule.listeManagerTCP.get(id).clientSocks.getInetAddress();
+	public void closeManagerTCP(int id){
+		System.out.println("Début de demande de fermeture de la Socket TCP "+ id);
+		InetAddress adr=this.listeManagerTCP.get(id).clientSocks.getInetAddress();
 		ControlMessage ctrlMsgToSend=this.sysState.comModule.createControlMessageWithLocalID(this.listeningPort, "bye");
-		this.sysState.comModule.ManagerUDP.sendControlMessage(ctrlMsgToSend, adr, this.listeningPort);
-		this.sysState.comModule.listeManagerTCP.get(id).close();
+		this.ManagerUDP.sendControlMessage(ctrlMsgToSend, adr, this.listeningPort);
+		System.out.println("Fin de fermeture de la Socket TCP "+ id);
+		this.listeManagerTCP.get(id).close();
+
 	}
 	
 	public void sendTxtMessage(String str,String srcPseudo, String destPseudo ){
@@ -156,9 +159,12 @@ public class Communication {
 
 		}
 		else if (order.equalsIgnoreCase("bye")){//un utilisateur se déconnecte
+			System.out.println("bye reçu ");
 			id=sysState.allDests.getUserID(ctrlMsg.getUserName());
 			this.listeManagerTCP.get(id).close();
 			this.sysState.allDests.getUser(id).setStatus(false);
+			System.out.println("fin bye");
+
 		}
 	}
 	

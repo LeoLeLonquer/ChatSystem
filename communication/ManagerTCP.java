@@ -3,6 +3,7 @@ package communication;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,46 +84,43 @@ public class ManagerTCP extends Thread{
 
 		while(connected){
 			try {
-				Message receivedMsg= (Message) reader.readObject();
+				if (reader.available()>0){
+					Message receivedMsg= (Message) reader.readObject();
 
-				if (receivedMsg.getType()==DataType.Text){
-					comModule.manageTxtMessage(receivedMsg);
-				}
-				else if (receivedMsg.getType()==DataType.File){
-					// TODO demande-t-on à l'utilisateur s'il veut télécharger le fichier ?
-
-
-
-					Message msgWithFileLength = (Message) reader.readObject();
-					int length = Integer.parseInt(msgWithFileLength.getData());//le deuxième message contient la taille totale du fichier
-
-					//le message est enregistré dans le dossier courant de l'utilisateur
-					String path=System.getProperty("user.dir") + "/" + receivedMsg.getData();//le premier message contient le nom du fichier
-
-					OutputStream receivedFile = new FileOutputStream(path);//fichier buffer 
-					InputStream input = clientSocks.getInputStream();//entrée des fichiers 
-
-					byte[] bytes = new byte[16*1024];
-					int fileSize = 0;
-					int count = input.read(bytes); //lecture du paquet TCP et enregistré dans bytes
-					while (fileSize < length && count > 0) {
-						receivedFile.write(bytes, 0, count);
-						fileSize += count;
-						count=input.read(bytes);
+					if (receivedMsg.getType()==DataType.Text){
+						comModule.manageTxtMessage(receivedMsg);
 					}
-					receivedFile.close();
+					else if (receivedMsg.getType()==DataType.File){
+						// TODO demande-t-on à l'utilisateur s'il veut télécharger le fichier ?
 
-					comModule.manageFileMessage(receivedMsg,path);
 
+
+						Message msgWithFileLength = (Message) reader.readObject();
+						int length = Integer.parseInt(msgWithFileLength.getData());//le deuxième message contient la taille totale du fichier
+
+						//le message est enregistré dans le dossier courant de l'utilisateur
+						String path=System.getProperty("user.dir") + "/" + receivedMsg.getData();//le premier message contient le nom du fichier
+
+						OutputStream receivedFile = new FileOutputStream(path);//fichier buffer 
+						InputStream input = clientSocks.getInputStream();//entrée des fichiers 
+
+						byte[] bytes = new byte[16*1024];
+						int fileSize = 0;
+						int count = input.read(bytes); //lecture du paquet TCP et enregistré dans bytes
+						while (fileSize < length && count > 0) {
+							receivedFile.write(bytes, 0, count);
+							fileSize += count;
+							count=input.read(bytes);
+						}
+						receivedFile.close();
+
+						comModule.manageFileMessage(receivedMsg,path);
+					}
 				}
-
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (NumberFormatException | ClassNotFoundException
+					| IOException e) {
 				e.printStackTrace();
 			}
-
-
 		}
 	}
 
@@ -195,11 +193,11 @@ public class ManagerTCP extends Thread{
 	public void close(){
 		try {
 			this.connected=false;
-			this.interrupt();
 			this.clientSocks.close();
 			if (this.type==1){
 				this.serverSocks.close();
 			}
+			this.interrupt();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
