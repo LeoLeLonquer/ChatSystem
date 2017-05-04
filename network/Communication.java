@@ -89,7 +89,6 @@ public class Communication {
 		this.ManagerUDP.sendControlMessage(ctrlMsgToSend, adr, this.listeningPort);
 		System.out.println("Fin de fermeture de la Socket TCP "+ id);
 		this.listeManagerTCP.get(id).close();
-
 	}
 	
 	public void sendTxtMessage(String str,String srcPseudo, String destPseudo ){
