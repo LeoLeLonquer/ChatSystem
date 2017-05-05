@@ -25,28 +25,70 @@ public class LoginWindow extends JFrame implements ActionListener{
 		 private JButton login;
 		 private User current; 
 		 
+		 private void initUs (User us){ 
+				Inet4Address ip;
+				try { 
+					ip = (Inet4Address) Inet4Address.getLocalHost();
+					 this.current = new User("default", 0, ip, false); 
+
+				} catch (UnknownHostException e){ 
+					System.out.println("ERROR: Unknown Host");
+				}
+		 }
+		 
 		//action performed 
 		public void actionPerformed(ActionEvent e) {
-			if (e.getSource()==login || loginArea.getText()=="\n") {
-				Inet4Address ip;
-				try {
-					ip = (Inet4Address) Inet4Address.getLocalHost();
-					this.current = new User("default", 0, ip, false); 
+			if (e.getSource()==login ) {
+				//Inet4Address ip;
+				//try {
+				//	ip = (Inet4Address) Inet4Address.getLocalHost();
+					this.initUs(this.current);
 					this.current.setPseudo(loginArea.getText());
 					this.current.setStatus(true);
 					
 					ListUsers checkList = new ListUsers(this.current);
 					this.setVisible(false);
 					
-				} catch (UnknownHostException e1) {
-					System.out.println("ERROR: Unknown Host");
-				}
+//				} catch (UnknownHostException e1) {
+//					System.out.println("ERROR: Unknown Host");
+//				}
 				
 			}
 		}
 		
 	 public LoginWindow (String titre) { 
 		 super(titre); 
+//			this.loginArea.addKeyListener(new KeyListener(){
+//			    @Override
+//			    public void keyPressed(KeyEvent e){
+//			 
+//			    }
+//
+//			    @Override
+//			    public void keyTyped(KeyEvent e) {
+//			    	Inet4Address ip;
+//			    	
+//					try {
+//				        if(e.getKeyCode() == KeyEvent.VK_ENTER){
+//						ip = (Inet4Address) Inet4Address.getLocalHost();
+//						
+//						
+//						
+//						
+//
+//						this.setVisible(false);
+//			        	loginArea.setText("" );
+//				        }
+//					} catch (UnknownHostException e1) {
+//						System.out.println("ERROR: Unknown Host");
+//					}
+//			    }
+//
+//			    @Override
+//			    public void keyReleased(KeyEvent e) {
+//			    }
+//			});
+
 		 initComponents();
 
 	 }
@@ -67,6 +109,7 @@ public class LoginWindow extends JFrame implements ActionListener{
 	 // a new button identified as OK
 	 login = new JButton("Log in");
 	 login.addActionListener(this); 
+	 PressEnter pe = new PressEnter (this.current, this.loginArea, this); 
 	 
 
 	 // configures the JFrame layout using a grid layout
@@ -79,7 +122,6 @@ public class LoginWindow extends JFrame implements ActionListener{
 
 	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; // pcq par défaut est en mode 
 	 //hide_on_close ce qui ne tue PAS le processus... --> pas correctement fermé!! 
-
 
 	 // packs the fenetre: size is calculated
 	 // regarding the added components
