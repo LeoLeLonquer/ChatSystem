@@ -16,7 +16,7 @@ public class Graphic {
 //	        new Graphic();
 //	    }
 
-	    public Graphic(User current) {
+	    public Graphic(User current, String friend) {
     //        this.current = current; 
 
 	        EventQueue.invokeLater(new Runnable() {
@@ -29,7 +29,7 @@ public class Graphic {
 	                JFrame frame = new JFrame("Chat System");
 	                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	                frame.setLayout(new BorderLayout());
-	                frame.add(new ConversationPane(current));
+	                frame.add(new ConversationPane(current, friend));
 	               // frame.pack();
 	                frame.setSize(1250, 750);
 	                frame.setLocationRelativeTo(null);
