@@ -1,6 +1,8 @@
 package controller;
 import java.io.File;
 
+import javax.swing.JButton;
+
 import model.*; 
 import view.*  ; 
 
@@ -22,7 +24,7 @@ public class HandleMessage {
 		
 	}
 	
-	public void sendFile (User current, User destination, File file){ 
+	public void sendFile (User current, User destination, File file, JButton sendFile){ 
 		
 	}
 	
