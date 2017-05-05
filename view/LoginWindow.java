@@ -23,18 +23,20 @@ public class LoginWindow extends JFrame implements ActionListener{
 		 private JTextArea loginArea;
 		 // a button to perform an action: e.g. say hello (TBD) */
 		 private JButton login;
+		 private User current; 
 		 
 		//action performed 
 		public void actionPerformed(ActionEvent e) {
-			if (e.getSource()==login) {
+			if (e.getSource()==login || loginArea.getText()=="\n") {
 				Inet4Address ip;
 				try {
 					ip = (Inet4Address) Inet4Address.getLocalHost();
-					User current = new User("default", 0, ip, false); 
-					current.setPseudo(loginArea.getText());
-					current.setStatus(true);
+					this.current = new User("default", 0, ip, false); 
+					this.current.setPseudo(loginArea.getText());
+					this.current.setStatus(true);
 					
-					ListUsers checkList = new ListUsers(current);
+					ListUsers checkList = new ListUsers(this.current);
+					this.setVisible(false);
 					
 				} catch (UnknownHostException e1) {
 					System.out.println("ERROR: Unknown Host");
@@ -47,6 +49,10 @@ public class LoginWindow extends JFrame implements ActionListener{
 		 super(titre); 
 		 initComponents();
 
+	 }
+	 
+	 public User getCurrentUs(){ 
+		 return this.current;
 	 }
 
 	 /** Initializes the window components */

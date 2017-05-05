@@ -1,4 +1,7 @@
 package view;
+import controller.*;
+import model.User;
+
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
@@ -18,8 +21,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 public class ConversationPane extends JPanel {
+	private User current; 
 	
-	 public ConversationPane() {
+	 public ConversationPane(User current) {
+		 this.current = current; 
+		 
 		 GridBagLayout gb = new GridBagLayout(); 
          GridBagConstraints c = new GridBagConstraints(); 
          setLayout(gb);
@@ -60,7 +66,7 @@ public class ConversationPane extends JPanel {
          c.weighty= 1; 
          c.gridheight= 2; 
          c.fill= GridBagConstraints.BOTH; 
-         JTextArea text = new JTextArea("Type your text here");
+         JTextArea text = new JTextArea("");
          text.setEditable(true);
         // jsp.add(text); 
          JScrollPane jsp = new JScrollPane(text); // because otherwise, the textarea extends and erases the send button
@@ -79,12 +85,13 @@ public class ConversationPane extends JPanel {
          gbMessage.setConstraints(senfFiles, c);
          yourMsgPane.add(senfFiles); 
          
-         //////////////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////
 
          //TOP PANE
          JScrollPane top ;// pane that contains the textarea
 //         JPanel convoPane = new JPanel();         
          JTextArea convo = new JTextArea();
+//         JEditorPane convo = new JEditorPane(); 
          convo.setEditable(false);
          top = new JScrollPane(convo); // because otherwise, the textarea extends and erases the send button
          top.setBorder(new LineBorder(Color.GREEN, 5));
@@ -117,9 +124,12 @@ public class ConversationPane extends JPanel {
          panel.add(panelTitle, BorderLayout.NORTH);
 //         JButton logout = new JButton("Log out"); 
 //         panel.add(logout , BorderLayout.LINE_START);
+         
+         //message handling to controller
+       DisplayMessage disp = new DisplayMessage(this.current ,send, text, convo, text.getText()); 
+         ////////////////////////////////////
 
-         return  panel;
-
+         return  panel; 
      }
 
 protected JPanel createLeftPane() {

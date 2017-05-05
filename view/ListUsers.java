@@ -22,7 +22,7 @@ public class ListUsers extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==userExample && !alreadyTalking){
 			alreadyTalking = true; 
-			Graphic g = new Graphic(); 
+			Graphic g = new Graphic(this.current); 
 		}
 	}
 	 private void initComponents() {
