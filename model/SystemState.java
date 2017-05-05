@@ -14,7 +14,7 @@ public class SystemState {
 //	private boolean isConnected ; 
 //	private Conv conv = new Conv(); 
 	
-	public User loggedUser; 
+	private User loggedUser;
 	public AllDests allDests; 
 	public Communication comModule;
 
@@ -23,13 +23,28 @@ public class SystemState {
 	    // this name is chosen when the user fist logs in ; 
 		// a window should pop to let the user choose their name --> value transferred to LoggedUser
 		allDests = new AllDests(this); 
+
+		InetAddress localAdr = null;
 		try {
-			this.loggedUser= new User(chosenName,ToolsCom.getLocalHostLANAddress(),true);
+			localAdr=ToolsCom.getLocalHostLANAddress();
 		} catch (UnknownHostException e) {
-			System.out.println("Erreur à la création de loggedUser");
 			e.printStackTrace();
 		}
+
+		int idLoggedUser=manageNewUser(chosenName,localAdr);
+		this.loggedUser=allDests.getUser(idLoggedUser);
+		
+	
 		comModule=new Communication(this);
+		
+		
+		//AJOUT DU PERROQUET
+		//int idPerroquet=manageNewUser("perroquet",localAdr);
+		//int loggedUserPort = comModule.getPortOfUser(idLoggedUser);	
+		//this.comModule.createManagerTCP(idLoggedUser, null, 0);
+		//this.comModule.createManagerTCP(idPerroquet, localAdr, loggedUserPort);
+
+
 
 	}
 	
@@ -43,29 +58,31 @@ public class SystemState {
 		return this.loggedUser;
 	}
 	
+
 	
-	public int manageNewUser(ControlMessage ctrlMsg) {
+	public int manageNewUser(String userName, InetAddress adr) {
 		int id=0;
-		if (allDests.checkAvailable(ctrlMsg.getUserName())){	//le nouvel utilisateur n'ecistait pas avant
+		if (allDests.checkAvailable(userName)){	//le nouvel utilisateur n'ecistait pas avant
 			
-			User newUser = new User(ctrlMsg.getUserName(),ctrlMsg.getUserAdresse(),true);
+			User newUser = new User(userName,adr,true);
 			System.out.println("nouveau User : " + newUser.toString());
 			allDests.addUser(newUser);
-			id=ctrlMsg.getUserName().hashCode();
+			id=userName.hashCode();
 			
 		}
 		else {															//le nouvel utilisateur existait déjà avant
-			id=ctrlMsg.getUserName().hashCode();
+			id=userName.hashCode();
 			if (allDests.getUser(id).getStatus()){  //un utilisateur à ce nom est déjà connecté
-				System.out.println("!!!!!!!Il existe déjà un utilisateur nommé "+ctrlMsg.getUserName()+" !!!!!!!!!!");
+				System.out.println("!!!!!!!Il existe déjà un utilisateur nommé "+userName+" !!!!!!!!!!");
 				id=-1;
 			}
 			else{
-				allDests.getUser(id).setIP(ctrlMsg.getUserAdresse());
+				allDests.getUser(id).setIP(adr);
 				allDests.getUser(id).setStatus(true);
 			}
 		}
 		return id;
 	}
+
 	
 }

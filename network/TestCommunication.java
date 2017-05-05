@@ -24,9 +24,9 @@ public class TestCommunication extends Thread{
 
 	public void run(){
 		System.out.println("start");
-		//while(true){
+		while(true){
 			try {
-				TimeUnit.SECONDS.sleep(7);
+				TimeUnit.SECONDS.sleep(5);
 				System.out.println("*********Liste des utilisateurs connectés*******");
 				System.out.print(this.sysState.allDests.toString());
 				System.out.println("************************************************");
@@ -34,34 +34,28 @@ public class TestCommunication extends Thread{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
 
-
-			System.out.println("Envoi message TCP");
-			sysState.comModule.sendTxtMessage("Coucou",this.nom,"yoyo");
+			//TEST ENVOI DE MESSAGE
 			
-			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-			System.out.println("tentative de fermeture");
-			int id=this.sysState.allDests.getUserID("yoyo");
-			this.sysState.comModule.closeManagerTCP(id);
-			System.out.println("fin tentatice de fermeture");
-
-
-
-//			while(true){
-//				try {
-//					TimeUnit.SECONDS.sleep(2);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//				System.out.println("Envoi message TCP");
-//				sysState.comModule.sendTxtMessage("Coucou","toto","yoyo");
+	//	System.out.println("Envoi message TCP");
+	//  sysState.comModule.sendTxtMessage("Coucou","toto");
+//			
+//			
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
 //			}
+//			
+			
+			//TEST DE FERMETURE DE SOCKET
+//			System.out.println("tentative de fermeture");
+//			int id=this.sysState.allDests.getUserID("yoyo");
+//			this.sysState.comModule.closeManagerTCP(id);
+//			System.out.println("fin tentatice de fermeture");
+
+
 		//}
 	}
 }

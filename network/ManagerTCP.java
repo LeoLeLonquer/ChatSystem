@@ -68,7 +68,7 @@ public class ManagerTCP extends Thread{
 				this.connected=true;
 				writer = new ObjectOutputStream(clientSocks.getOutputStream());
 				reader = new ObjectInputStream(clientSocks.getInputStream());
-			}	
+			}
 			else if (type==2){
 				int flag=0;
 				while(flag==0){

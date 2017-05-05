@@ -37,9 +37,9 @@ public class ListUsers extends JFrame implements ActionListener {
 	 this.setLayout(new GridLayout(0,1));
 	 this.add(listUs); 
 	 this.add(userExample);
-	 this.setTitle("Welcome " + current.getPseudo(current)); 
+	 this.setTitle("Welcome " + current.getPseudo()); 
 	 
-	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; // pcq par défaut est en mode 
+	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; // pcq par dï¿½faut est en mode 
 	 
 	 // packs the fenetre: size is calculated
 //	 this.pack();

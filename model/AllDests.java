@@ -1,5 +1,7 @@
 package model; 
 import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 public class AllDests {
@@ -40,6 +42,11 @@ public class AllDests {
 	
 	public void addUser(User us) { 
 		this.ListUsers.put(us.getUserID(), us) ;
+	}
+	
+	public void setLoggedUser (User user) throws UnknownHostException {
+		InetAddress  IP = (InetAddress) InetAddress.getLocalHost(); 
+		ListUsers.put(0, user); 
 	}
 
 	public void addGroup(Groupe group) {

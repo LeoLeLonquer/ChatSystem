@@ -18,8 +18,8 @@ public class Communication {
 	Controller controller;
 	SystemState sysState;
 	ManagerUDP ManagerUDP;
-	HashMap<Integer,ManagerTCP> listeManagerTCP ;
-	int listeningPort=1404;
+	public HashMap<Integer,ManagerTCP> listeManagerTCP ;
+	int listeningPort=15530;
 	int cptSocket=1;
 	
 	public Communication(SystemState sysState){
@@ -42,8 +42,10 @@ public class Communication {
 	}
 	
 	
+	
+	
 // ******************partie create***************************///
-	private void createManagerTCP(int id,InetAddress adr, int port) {//on peut mettre adr à null et port à 0
+	public void createManagerTCP(int id,InetAddress adr, int port) {//on peut mettre adr à null et port à 0
 	
 		if (adr==null){ //si adr==null c'est seulement pour créer un nouveau serveur
 			System.out.println("!!!!!!!!!!!!!Serveur créé!!!!!!!!!!!!!");
@@ -91,15 +93,15 @@ public class Communication {
 		this.listeManagerTCP.get(id).close();
 	}
 	
-	public void sendTxtMessage(String str,String srcPseudo, String destPseudo ){
-		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
+	public void sendTxtMessage(String str, String destPseudo ){
+		Message msg= new Message(DataType.Text, str, destPseudo,sysState.getLoggedUser().getPseudo());
 		int id= sysState.allDests.getUserID(destPseudo);
 		this.listeManagerTCP.get(id).sendMessage(msg);
 	}
 	
-	public void sendFileMessage(File file,String srcPseudo, String destPseudo){
+	public void sendFileMessage(File file, String destPseudo){
 		int id= sysState.allDests.getUserID(destPseudo);
-		this.listeManagerTCP.get(id).sendFile(file,destPseudo,srcPseudo);
+		this.listeManagerTCP.get(id).sendFile(file,destPseudo,sysState.getLoggedUser().getPseudo());
 	}
 
 	// ******************partie manage***************************///
@@ -115,7 +117,7 @@ public class Communication {
 			System.out.println("Hello reçu");
 
 			
-			id=this.sysState.manageNewUser(ctrlMsg);// on crée un nouvel utilisateur s'il n'existe pas déjà sinon on l'jaoute si l'ancien utilisateur est déco
+			id=this.sysState.manageNewUser(ctrlMsg.getUserName(),ctrlMsg.getUserAdresse());// on crée un nouvel utilisateur s'il n'existe pas déjà sinon on l'jaoute si l'ancien utilisateur est déco
 			//TODO faire le check de id=-1
 			
 			this.createManagerTCP(id,null,0);
@@ -138,7 +140,7 @@ public class Communication {
 
 			
 			if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){//l'utilisateur n'existe pas dans notre table allDests
-				id= this.sysState.manageNewUser(ctrlMsg);
+				id= this.sysState.manageNewUser(ctrlMsg.getUserName(),ctrlMsg.getUserAdresse());
 				this.createManagerTCP(id,ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
 			}
 			else {															//l'utilisateur existe déjà dans notre table allDests
@@ -192,6 +194,12 @@ public class Communication {
 			sysState.allDests.getUser(id).getConv().addMessage(msg);
 			controller.notifyNewMessageFromModel(id);
 			}		
+	}
+
+
+	public int getPortOfUser(int idLoggedUser) {
+		
+		return listeManagerTCP.get(idLoggedUser).getPort() ;
 	}
 	
 

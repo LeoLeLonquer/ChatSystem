@@ -30,7 +30,7 @@ public class LoginWindow extends JFrame implements ActionListener{
 				Inet4Address ip;
 				try {
 					ip = (Inet4Address) Inet4Address.getLocalHost();
-					User current = new User("default", 0, ip, false); 
+					User current = new User("default", ip, false); 
 					current.setPseudo(loginArea.getText());
 					current.setStatus(true);
 					
