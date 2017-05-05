@@ -130,6 +130,7 @@ public class ConversationPane extends JPanel {
          
          //message handling to controller
        DisplayMessage disp = new DisplayMessage(this.current ,send, text, convo, text.getText()); 
+       FileWindow fwin = new FileWindow (senfFiles, convo);
          ////////////////////////////////////
 
          return  panel; 
