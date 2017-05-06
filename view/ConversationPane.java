@@ -1,7 +1,6 @@
 package view;
 import controller.*;
 import model.User;
-import trash.DisplayMessage;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -38,12 +37,12 @@ public class ConversationPane extends JPanel implements ActionListener{
 	private JButton sendFile; 
 	private JTextArea msgArea; 
 	private JTextArea convo; 
-	private Controller controller; 
+	private Interface intf; 
 	
-	 public ConversationPane(Controller controller, String current, String friendPseudo) {
+	 public ConversationPane(Interface intf, String current, String friendPseudo) {
 		 this.currentUser = current; 
 		 this.friendPseudo = friendPseudo; 
-		 this.controller = controller; 
+		 this.intf = intf; 
 		 
 		 GridBagLayout gb = new GridBagLayout(); 
          GridBagConstraints c = new GridBagConstraints(); 
@@ -74,7 +73,9 @@ public class ConversationPane extends JPanel implements ActionListener{
 		    public void keyPressed(KeyEvent e){
 		    	if(e.getKeyCode() == KeyEvent.VK_ENTER){
 		        	String msg = yourArea.getText(); 
-					controller.sendMessage(currentUser, friendUser, msg);
+		        	if (msg!= null)
+		        		convo.append(currentUser + ": " + msg + "\n");
+		        	intf.transferMsgToController(currentUser, friendUser, msg); // msg transferred to controller 
 					e.consume();
 					yourArea.setText("" );
 		        }
@@ -88,14 +89,16 @@ public class ConversationPane extends JPanel implements ActionListener{
 		    public void keyReleased(KeyEvent e) {
 		    }
 		});
-		ThreadDisplay t = new ThreadDisplay("loadmessage", this.currentUser, convo);
-		t.start();
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==this.sendMsg){ 			
-			controller.sendMessage( this.currentUser, this.friendPseudo, (this.msgArea.getText() + "\n")) ;
+			String msg = this.msgArea.getText(); 
+        	if (msg!= null)
+        		this.convo.append(currentUser + ": " + msg + "\n");
+        	intf.transferMsgToController(this.currentUser, this.friendPseudo, msg); // msg transferred to controller 
+
 				this.msgArea.setText("");
 		}
 		
@@ -149,7 +152,6 @@ public class ConversationPane extends JPanel implements ActionListener{
 
          //TOP PANE
          JScrollPane top ;// pane that contains the textarea
-//         JPanel convoPane = new JPanel();         
          JTextArea convo = new JTextArea();
          convo.setFont(new Font("Sans Serif", Font.PLAIN, 12));
          convo.setEditable(false);
@@ -157,7 +159,6 @@ public class ConversationPane extends JPanel implements ActionListener{
          
          top = new JScrollPane(convo); // because otherwise, the textarea extends and erases the send button
          top.setBorder(new LineBorder(Color.GRAY, 7));
-//         top.add(convoPane);
 
          JPanel bottom = new JPanel(new GridLayout(1, 0));
          bottom.add(yourMsgPane);
@@ -183,12 +184,11 @@ public class ConversationPane extends JPanel implements ActionListener{
          panelTitle.setForeground(Color.WHITE);
          panelTitle.setFont(new Font("SansSerif", Font.BOLD, 18));
          panel.add(panelTitle, BorderLayout.NORTH);
-//         JButton logout = new JButton("Log out"); 
-//         panel.add(logout , BorderLayout.LINE_START);
          
-         //message handling to controller
+
        DisplayMessage(this.currentUser, this.friendPseudo, send, text, convo); 
        FileWindow fwin = new FileWindow (senfFiles, convo);
+       
          ////////////////////////////////////
 
          return  panel; 
@@ -222,8 +222,7 @@ public class ConversationPane extends JPanel implements ActionListener{
         	 JButton button = new JButton ("User " + i); 
         	 listUs.add(button);
          }
-//         JButton button1 = new JButton ("User 1"); 
-//         listUs.add(button1);          
+         
          JPanel container = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
          container.setBackground(Color.CYAN);
          container.setSize(listUs.getSize());
