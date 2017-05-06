@@ -6,12 +6,10 @@ import java.util.*;
 
 public class AllDests {
 	
-	SystemState sysState;
 	private HashMap<Integer, User> ListUsers; 
 	private HashMap<Integer, Groupe> ListGroups; 
 	
-	public AllDests(SystemState sysState) { 
-		this.sysState=sysState;
+	public AllDests() { 
 		ListUsers = new HashMap<Integer, User>() ; 
 		ListGroups = new HashMap <Integer, Groupe> (); 
 	}

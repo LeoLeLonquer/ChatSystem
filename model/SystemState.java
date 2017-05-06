@@ -22,7 +22,7 @@ public class SystemState {
 	public SystemState(String chosenName){
 	    // this name is chosen when the user fist logs in ; 
 		// a window should pop to let the user choose their name --> value transferred to LoggedUser
-		allDests = new AllDests(this); 
+		allDests = new AllDests(); 
 
 		InetAddress localAdr = null;
 		try {
