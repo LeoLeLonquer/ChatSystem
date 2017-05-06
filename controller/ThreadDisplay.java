@@ -32,7 +32,7 @@ public class ThreadDisplay extends Thread {
 		    	// ce que le thread fait : readline pour receive? 
 		    	try {
 		    		if ((line=reader.readLine())!= null ){  // readLine reads the line... then throws it away !!! so keep it before testing:!!:
-		    			textArea.append( us.getPseudo(us) + " \n" + line + "\n");
+		    			textArea.append( us.getPseudo(us) + ": " + line + "\n");
 						
 						}  
 		    		/* append text only if the same user's been talking?? possible to use a var that saves

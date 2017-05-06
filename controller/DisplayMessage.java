@@ -2,6 +2,8 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,6 +38,7 @@ public class DisplayMessage implements ActionListener {
 		this.convoToLoadIn = convo ; 
 		this.msg=msg; 
 		
+		// static method gets current user -> no need to instantiate (passer user en static) 
 
 		try {
 			File temp=new File("temp.txt"); //use streams instead??? or use temp as 'chat history'?
@@ -50,27 +53,44 @@ public class DisplayMessage implements ActionListener {
 		}
 		
 		this.sendMsg.addActionListener(this);
+		yourMsgArea.addKeyListener(new KeyListener(){
+		    @Override
+		    public void keyPressed(KeyEvent e){
+		    	if(e.getKeyCode() == KeyEvent.VK_ENTER){
+		        	try {
+						writer.write(yourMsgArea.getText() ) ;
+						e.consume();
+						yourMsgArea.setText("" );
+						writer.flush(); 
+					} catch (IOException e1) {
+						System.out.println("ERROR: couldn't write in buffer.");
+					}
+		        }
+		    }
+
+		    @Override
+		    public void keyTyped(KeyEvent e) {
+		        
+		    }
+
+		    @Override
+		    public void keyReleased(KeyEvent e) {
+		    }
+		});
 		ThreadDisplay t = new ThreadDisplay("loadmessage", this.us, this.reader, this.writer, 
 						  this.convoToLoadIn);
 		t.start();
 	}
 	//recup old convos? buffer, or files? 
 	
-	// faire en sorte qu'en tapant entrée, ça envoie le message 
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==this.sendMsg){ 			
 			try {
-//				  long tStart = System.currentTimeMillis();
 
 				writer.write(yourMsgArea.getText() + "\n") ;
 				yourMsgArea.setText(""); 
 				writer.flush(); 
-				
-//				 long tEnd = System.currentTimeMillis();
-//				  long tDelta = tEnd - tStart;
-//				  double elapsedSeconds = tDelta / 1000.0;
 				  
 				} catch (IOException e1) {
 					System.out.println("ERROR: couldn't write in buffer ");

@@ -22,22 +22,24 @@ import javax.swing.border.LineBorder;
 
 public class ConversationPane extends JPanel {
 	private User current; 
+	private String friendPseudo; 
 	
-	 public ConversationPane(User current) {
+	 public ConversationPane(User current, String friendPseudo) {
 		 this.current = current; 
+		 this.friendPseudo = friendPseudo; 
 		 
 		 GridBagLayout gb = new GridBagLayout(); 
          GridBagConstraints c = new GridBagConstraints(); 
          setLayout(gb);
-         JPanel pane1 = createLeftPane();
+ //        JPanel pane1 = createLeftPane();
          JPanel pane2 = createRightPane();
 
-         c.weightx = 1;
-         c.weighty= 1; 
-         c.fill= GridBagConstraints.BOTH; 
-         gb.setConstraints(pane1, c);
-         add(pane1);
-         
+//         c.weightx = 1;
+//         c.weighty= 1; 
+//         c.fill= GridBagConstraints.BOTH; 
+//         gb.setConstraints(pane1, c);
+//         add(pane1);
+//         
          c.weightx = 3;
          c.weighty= 1; 
          c.gridwidth = 3; 
@@ -91,10 +93,11 @@ public class ConversationPane extends JPanel {
          JScrollPane top ;// pane that contains the textarea
 //         JPanel convoPane = new JPanel();         
          JTextArea convo = new JTextArea();
+         convo.setFont(new Font("Sans Serif", Font.PLAIN, 12));
 //         JEditorPane convo = new JEditorPane(); 
          convo.setEditable(false);
          top = new JScrollPane(convo); // because otherwise, the textarea extends and erases the send button
-         top.setBorder(new LineBorder(Color.GREEN, 5));
+         top.setBorder(new LineBorder(Color.GRAY, 7));
 //         top.add(convoPane);
 
          JPanel bottom = new JPanel(new GridLayout(1, 0));
@@ -118,7 +121,7 @@ public class ConversationPane extends JPanel {
          
          panel.add(content);
          
-         JLabel panelTitle = new JLabel("Chatting with "); 
+         JLabel panelTitle = new JLabel("Chatting with " + this.friendPseudo); 
          panelTitle.setForeground(Color.WHITE);
          panelTitle.setFont(new Font("SansSerif", Font.BOLD, 18));
          panel.add(panelTitle, BorderLayout.NORTH);
@@ -127,6 +130,7 @@ public class ConversationPane extends JPanel {
          
          //message handling to controller
        DisplayMessage disp = new DisplayMessage(this.current ,send, text, convo, text.getText()); 
+       FileWindow fwin = new FileWindow (senfFiles, convo);
          ////////////////////////////////////
 
          return  panel; 
