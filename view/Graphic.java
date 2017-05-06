@@ -6,9 +6,11 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import controller.Controller;
 import model.User;
 
 public class Graphic {
+	private Controller controller; 
 	
 //	private User current;
 	
@@ -16,8 +18,9 @@ public class Graphic {
 //	        new Graphic();
 //	    }
 
-	    public Graphic(User current, String friend) {
+	    public Graphic(Controller controller, String  current, String friend) {
     //        this.current = current; 
+	    	this.controller = controller ; 
 
 	        EventQueue.invokeLater(new Runnable() {
 	            @Override
@@ -29,7 +32,7 @@ public class Graphic {
 	                JFrame frame = new JFrame("Chat System");
 	                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	                frame.setLayout(new BorderLayout());
-	                frame.add(new ConversationPane(current, friend));
+	                frame.add(new ConversationPane(controller, current, friend));
 	               // frame.pack();
 	                frame.setSize(1250, 750);
 	                frame.setLocationRelativeTo(null);

@@ -1,6 +1,7 @@
 package view;
 import controller.*;
 import model.User;
+import trash.DisplayMessage;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -10,6 +11,16 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -20,13 +31,19 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-public class ConversationPane extends JPanel {
-	private User current; 
+public class ConversationPane extends JPanel implements ActionListener{
+	private String currentUser; 
 	private String friendPseudo; 
+	private JButton sendMsg; 
+	private JButton sendFile; 
+	private JTextArea msgArea; 
+	private JTextArea convo; 
+	private Controller controller; 
 	
-	 public ConversationPane(User current, String friendPseudo) {
-		 this.current = current; 
+	 public ConversationPane(Controller controller, String current, String friendPseudo) {
+		 this.currentUser = current; 
 		 this.friendPseudo = friendPseudo; 
+		 this.controller = controller; 
 		 
 		 GridBagLayout gb = new GridBagLayout(); 
          GridBagConstraints c = new GridBagConstraints(); 
@@ -39,7 +56,7 @@ public class ConversationPane extends JPanel {
 //         c.fill= GridBagConstraints.BOTH; 
 //         gb.setConstraints(pane1, c);
 //         add(pane1);
-//         
+         
          c.weightx = 3;
          c.weighty= 1; 
          c.gridwidth = 3; 
@@ -47,6 +64,42 @@ public class ConversationPane extends JPanel {
          gb.setConstraints(pane2, c);
          add(pane2);
      }
+	
+	private void DisplayMessage(String currentUser, String friendUser, JButton send, 
+				JTextArea yourArea, JTextArea convo){ 
+
+		send.addActionListener(this);
+		yourArea.addKeyListener(new KeyListener(){
+		    @Override
+		    public void keyPressed(KeyEvent e){
+		    	if(e.getKeyCode() == KeyEvent.VK_ENTER){
+		        	String msg = yourArea.getText(); 
+					controller.sendMessage(currentUser, friendUser, msg);
+					e.consume();
+					yourArea.setText("" );
+		        }
+		    }
+
+		    @Override
+		    public void keyTyped(KeyEvent e) {		    
+		    }
+
+		    @Override
+		    public void keyReleased(KeyEvent e) {
+		    }
+		});
+		ThreadDisplay t = new ThreadDisplay("loadmessage", this.currentUser, convo);
+		t.start();
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource()==this.sendMsg){ 			
+			controller.sendMessage( this.currentUser, this.friendPseudo, (this.msgArea.getText() + "\n")) ;
+				this.msgArea.setText("");
+		}
+		
+	}
 
      protected JPanel createRightPane() {
 
@@ -70,7 +123,8 @@ public class ConversationPane extends JPanel {
          c.fill= GridBagConstraints.BOTH; 
          JTextArea text = new JTextArea("");
          text.setEditable(true);
-        // jsp.add(text); 
+         this.msgArea = text; 
+
          JScrollPane jsp = new JScrollPane(text); // because otherwise, the textarea extends and erases the send button
          gbMessage.setConstraints(jsp, c);
          yourMsgPane.add(jsp);
@@ -80,10 +134,14 @@ public class ConversationPane extends JPanel {
          c.gridheight= 1; 
          c.gridwidth= GridBagConstraints.REMAINDER; 
          c.fill= GridBagConstraints.BOTH; 
+         
          JButton send = new JButton("Send");  // add send button
+         this.sendMsg = send; 
          gbMessage.setConstraints(send, c);
          yourMsgPane.add(send); 
+
          JButton senfFiles = new JButton("Send Files"); // add send files button 
+         this.sendFile = senfFiles; 
          gbMessage.setConstraints(senfFiles, c);
          yourMsgPane.add(senfFiles); 
          
@@ -94,8 +152,9 @@ public class ConversationPane extends JPanel {
 //         JPanel convoPane = new JPanel();         
          JTextArea convo = new JTextArea();
          convo.setFont(new Font("Sans Serif", Font.PLAIN, 12));
-//         JEditorPane convo = new JEditorPane(); 
          convo.setEditable(false);
+        this.convo = convo;  
+         
          top = new JScrollPane(convo); // because otherwise, the textarea extends and erases the send button
          top.setBorder(new LineBorder(Color.GRAY, 7));
 //         top.add(convoPane);
@@ -115,7 +174,6 @@ public class ConversationPane extends JPanel {
          gbc.gridwidth = GridBagConstraints.REMAINDER;
          gbc.weighty = 1;
          gbc.weightx = 1;
-//         gbc.gridheight = GridBagConstraints.REMAINDER; 
          gbc.fill = GridBagConstraints.BOTH;
          content.add(bottom, gbc);
          
@@ -129,14 +187,14 @@ public class ConversationPane extends JPanel {
 //         panel.add(logout , BorderLayout.LINE_START);
          
          //message handling to controller
-       DisplayMessage disp = new DisplayMessage(this.current ,send, text, convo, text.getText()); 
+       DisplayMessage(this.currentUser, this.friendPseudo, send, text, convo); 
        FileWindow fwin = new FileWindow (senfFiles, convo);
          ////////////////////////////////////
 
          return  panel; 
      }
 
-protected JPanel createLeftPane() {
+     protected JPanel createLeftPane() {
 		 GridBagLayout gb = new GridBagLayout(); 
 		 GridBagConstraints c = new GridBagConstraints(); 
 		 

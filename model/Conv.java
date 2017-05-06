@@ -34,7 +34,7 @@ public class Conv {
 		while(itr.hasNext()){
 			msg= itr.next();
 			if (msg.getType()==DataType.Text){
-				str=str+"\n-"+msg.getSrcPseudo()+msg.getData();
+				str=str+this.readMessage(msg);
 			}
 			else if (msg.getType()==DataType.File){
 				//TODO
@@ -44,21 +44,20 @@ public class Conv {
 		return str;
 	}
 
-	public String readLastMessage(){
-		String str="";
+	public Message getLastMessage(){
 
-		int lastIndex= listeMessage.lastIndexOf(listeMessage);
-		Message msg= listeMessage.get(lastIndex);
+		int lastIndex= listeMessage.size();
+		Message msg= listeMessage.get(lastIndex-1);
 
+		return msg;
+	}
+	
+	public String readMessage(Message msg){
+		String str = "";
 		if (msg.getType()==DataType.Text){
-			str=str+"\n-"+msg.getSrcPseudo()+" : "+msg.getData();
+			str="\n"+msg.getSrcPseudo()+" : "+msg.getData();
 		}
-		else if (msg.getType()==DataType.File){
-			//TODO
-		}
-
 		return str;
-
 	}
 
 }

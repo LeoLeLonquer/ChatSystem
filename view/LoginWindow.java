@@ -23,78 +23,17 @@ public class LoginWindow extends JFrame implements ActionListener{
 		 private JTextArea loginArea;
 		 // a button to perform an action: e.g. say hello (TBD) */
 		 private JButton login;
-		 private User current; 
+		 private String currentUser; 
+		 private Controller controller; 
 		 
-		 private void initUs (User us){ 
-				Inet4Address ip;
-				try { 
-					ip = (Inet4Address) Inet4Address.getLocalHost();
-					 this.current = new User("default", 0, ip, false); 
-
-				} catch (UnknownHostException e){ 
-					System.out.println("ERROR: Unknown Host");
-				}
-		 }
-		 
-		//action performed 
-		public void actionPerformed(ActionEvent e) {
-			if (e.getSource()==login ) {
-				//Inet4Address ip;
-				//try {
-				//	ip = (Inet4Address) Inet4Address.getLocalHost();
-					this.initUs(this.current);
-					this.current.setPseudo(loginArea.getText());
-					this.current.setStatus(true);
-					
-					ListUsers checkList = new ListUsers(this.current);
-					this.setVisible(false);
-					
-//				} catch (UnknownHostException e1) {
-//					System.out.println("ERROR: Unknown Host");
-//				}
-				
-			}
-		}
-		
-	 public LoginWindow (String titre) { 
+	 public LoginWindow (Controller controller, String titre) { 
 		 super(titre); 
-//			this.loginArea.addKeyListener(new KeyListener(){
-//			    @Override
-//			    public void keyPressed(KeyEvent e){
-//			 
-//			    }
-//
-//			    @Override
-//			    public void keyTyped(KeyEvent e) {
-//			    	Inet4Address ip;
-//			    	
-//					try {
-//				        if(e.getKeyCode() == KeyEvent.VK_ENTER){
-//						ip = (Inet4Address) Inet4Address.getLocalHost();
-//						
-//						
-//						
-//						
-//
-//						this.setVisible(false);
-//			        	loginArea.setText("" );
-//				        }
-//					} catch (UnknownHostException e1) {
-//						System.out.println("ERROR: Unknown Host");
-//					}
-//			    }
-//
-//			    @Override
-//			    public void keyReleased(KeyEvent e) {
-//			    }
-//			});
-
+		 this.controller= controller; 
 		 initComponents();
-
 	 }
 	 
-	 public User getCurrentUs(){ 
-		 return this.current;
+	 public String getCurrentUs(){ 
+		 return this.currentUser;
 	 }
 
 	 /** Initializes the window components */
@@ -109,7 +48,7 @@ public class LoginWindow extends JFrame implements ActionListener{
 	 // a new button identified as OK
 	 login = new JButton("Log in");
 	 login.addActionListener(this); 
-	 PressEnter pe = new PressEnter (this.current, this.loginArea, this); 
+	 PressEnter (this.currentUser, this.loginArea, this); 
 	 
 
 	 // configures the JFrame layout using a grid layout
@@ -120,23 +59,48 @@ public class LoginWindow extends JFrame implements ActionListener{
 	 this.add(loginArea); 
 	 this.add(login); 
 
-	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; // pcq par défaut est en mode 
-	 //hide_on_close ce qui ne tue PAS le processus... --> pas correctement fermé!! 
-
-	 // packs the fenetre: size is calculated
-	 // regarding the added components
-//	 this.pack();
+	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; 
 	 this.setSize(300, 150);
      this.setLocationRelativeTo(null);
 	 // the JFrame is visible now
 	 this.setVisible(true);
 	 }
-	 
-	 /** main entry point */
-	 public static void main(String[] args){
-	    LoginWindow log = new LoginWindow("Welcome to the Chat System");  
 
-  }
+	 
+	 private void PressEnter(String currentUser, JTextArea loginArea, LoginWindow lw){ 
+			this.loginArea.addKeyListener(new KeyListener(){
+			@Override
+			public void keyPressed(KeyEvent e) {		    	
+				if(e.getKeyCode() == KeyEvent.VK_ENTER){					
+
+			controller.initUs(currentUser);
+			 System.out.print(currentUser);
+
+				ListUsers checkList = new ListUsers(controller, currentUser);
+				lw.setVisible(false);
+				}		
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			@Override
+			public void keyTyped(KeyEvent e) {			
+			}	
+		});
+	 }
+	 
+	//action performed 
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource()==login ) {
+
+				controller.initUs(this.currentUser);				
+				ListUsers checkList = new ListUsers(this.controller, this.currentUser);
+				this.setVisible(false);
+				
+			
+		}
+	}
 
 }
 

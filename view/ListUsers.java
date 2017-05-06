@@ -8,39 +8,30 @@ import java.util.Iterator;
 
 import javax.swing.*;
 
-import controller.NotifyViewUsers;
+import controller.Controller;
 import model.User;
+import trash.NotifyViewUsers;
 
 public class ListUsers extends JFrame implements ActionListener {
 	
 	 private JLabel listUs;
 	 private JButton userExample;
-	 private User current; 
+	 private String currentUser; 
 	 private boolean alreadyTalking = false; 
 	 private ArrayList<JButton> listButtons ; 
+	 private Controller controller;
 
-	public ListUsers(User current){ 
+	public ListUsers(Controller controller, String current){ 
 		listButtons = new ArrayList<JButton>(); 
-		this.current=current; 
+		this.currentUser=current; 
+		this.controller = controller; 
 		 initComponents();
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		for (Iterator<JButton> it = this.listButtons.iterator(); it.hasNext(); ){
-			JButton b = it.next(); 
-			if (e.getSource()==b && !alreadyTalking){
-				alreadyTalking = true; 
-				Graphic g = new Graphic(this.current, b.getText()); 
-			}
-		}
-
-	}
-	
 	public ArrayList<JButton> computeGrid (ArrayList<User> lu){ 
 		for (Iterator<User> it = lu.iterator() ; it.hasNext();){
 			User us = it.next(); 
-			JButton j = new JButton(us.getPseudo(us));
+			JButton j = new JButton(us.getPseudo());
 			this.listButtons.add(j);
 			this.add(j); 
 		}
@@ -66,7 +57,7 @@ public class ListUsers extends JFrame implements ActionListener {
 	 }
 
 	// this.add(userExample);
-	 this.setTitle("Welcome " + current.getPseudo(current)); 
+	 this.setTitle("Welcome " + this.currentUser); 
 	 
 	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; // pcq par défaut est en mode 
 	 
@@ -78,10 +69,16 @@ public class ListUsers extends JFrame implements ActionListener {
 	 this.setVisible(true);
 	 }
 	 
-//	 /** main entry point */
-//	 public static void main(String[] args) {
-//	    ListUsers lu = new ListUsers();  
-//
-//	  }
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		for (Iterator<JButton> it = this.listButtons.iterator(); it.hasNext(); ){
+			JButton b = it.next(); 
+			if (e.getSource()==b && !alreadyTalking){
+				alreadyTalking = true; 
+				Graphic g = new Graphic(this.controller, this.currentUser, b.getText() ); 
+			}
+		}
+
+	}
 	
 }
