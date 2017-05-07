@@ -22,6 +22,15 @@ public class ManagerUDP extends Thread{
 		start();
 	}
 	
+	public ManagerUDP(Communication comModule,int listeningPort) throws SocketException{
+		this.comModule=comModule;
+		datagramSocket = new DatagramSocket(listeningPort);
+		receiveData = new byte[1024];
+		sendData = new byte[1024];
+		datagramSocket.setBroadcast(true);
+		start();
+	}
+	
 	public void run(){
 		while(true){
 			System.out.println("Début de réception de packet UDP");
@@ -57,7 +66,6 @@ public class ManagerUDP extends Thread{
 		InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
 		this.sendControlMessage(ctrlMsgToSend,broadcastAddress,comModule.listeningPort);
 		datagramSocket.setBroadcast(false);
-
 	}
 	
 	public void closeSocket(){

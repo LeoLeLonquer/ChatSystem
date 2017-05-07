@@ -10,7 +10,6 @@ import javax.swing.*;
 
 import controller.Controller;
 import model.User;
-import trash.NotifyViewUsers;
 
 public class ListUsers extends JFrame implements ActionListener {
 	
@@ -42,7 +41,7 @@ public class ListUsers extends JFrame implements ActionListener {
 	 private void initComponents() {
 	 listUs = new JLabel("Connected Users:"); 
 	 // communication with the controller:
-	 	NotifyViewUsers nvu = new NotifyViewUsers(); 
+	 	controller.updateListUsers(this);  
 	 
 //	 userExample = new JButton("user1"); 
 	 	
@@ -50,7 +49,7 @@ public class ListUsers extends JFrame implements ActionListener {
 	 this.setLayout(new GridLayout(0,1));
 	 this.add(listUs); 
 	 //computeGrid(nvu.getListPseudos());
-	 computeGrid(nvu.testListUsersView()); 
+	 computeGrid(this.controller.testListUsersView()); 
 	 for (Iterator<JButton> it= this.listButtons.iterator(); it.hasNext();){
 		JButton j = it.next(); 
 		j.addActionListener(this); 
@@ -59,7 +58,7 @@ public class ListUsers extends JFrame implements ActionListener {
 	// this.add(userExample);
 	 this.setTitle("Welcome " + this.currentUser); 
 	 
-	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; // pcq par défaut est en mode 
+	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; // pcq par dï¿½faut est en mode 
 	 
 	 // packs the fenetre: size is calculated
 //	 this.pack();

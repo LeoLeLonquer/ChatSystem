@@ -6,7 +6,7 @@ public class User implements Dest{
 	private String pseudo;
 	private InetAddress  IP;
 	private boolean isConnected ;
-	private Conv conversation; 
+	public Conv conversation; 
 
 	
 	public User(String pseudo, InetAddress  IP, boolean isConnected){

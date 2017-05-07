@@ -6,11 +6,11 @@ import java.util.*;
 
 public class AllDests {
 	
-	private HashMap<Integer, User> ListUsers; 
+	private HashMap<Integer, User> listUsers; 
 	private HashMap<Integer, Groupe> ListGroups; 
 	
 	public AllDests() { 
-		ListUsers = new HashMap<Integer, User>() ; 
+		listUsers = new HashMap<Integer, User>() ; 
 		ListGroups = new HashMap <Integer, Groupe> (); 
 	}
 
@@ -31,7 +31,7 @@ public class AllDests {
 //	}
 	
 	public HashMap<Integer,User> getListUsers(){
-		return this.ListUsers; 
+		return this.listUsers; 
 	}
 	
 	public HashMap<Integer,Groupe> getListGroups(){
@@ -39,12 +39,12 @@ public class AllDests {
 	}
 	
 	public void addUser(User us) { 
-		this.ListUsers.put(us.getUserID(), us) ;
+		this.listUsers.put(us.getUserID(), us) ;
 	}
 	
 	public void setLoggedUser (User user) throws UnknownHostException {
 		InetAddress  IP = (InetAddress) InetAddress.getLocalHost(); 
-		ListUsers.put(0, user); 
+		listUsers.put(0, user); 
 	}
 
 	public void addGroup(Groupe group) {
@@ -52,7 +52,7 @@ public class AllDests {
 	}
 	
 	public void removeUser(int id){ 
-		this.ListUsers.remove(id);
+		this.listUsers.remove(id);
 	}
 	
 	public void removeGroup(int id){ 
@@ -60,11 +60,11 @@ public class AllDests {
 	}
 	
 	public User getUser(int id){ 
-		return this.ListUsers.get(id);
+		return this.listUsers.get(id);
 	}
 	
 	public int getUserID(String pseudo){
-		if (ListUsers.containsKey(pseudo.hashCode())){
+		if (listUsers.containsKey(pseudo.hashCode())){
 			return pseudo.hashCode();
 			}
 		else {
@@ -77,17 +77,19 @@ public class AllDests {
 	}
 	
 	public boolean checkAvailable (String pseudo) {
-		if (this.getUserID(pseudo)!=-1)
+		if (listUsers.containsKey(pseudo.hashCode())){
 			return false;
-		else 
-			return true; 
+		}
+		else {
+			return true;
+		}
 	}
 	
 	@Override
 	public String toString(){
 		String str="";
-		for (Iterator<Integer> it = this.ListUsers.keySet().iterator(); it.hasNext() ;) {
-			User us = this.ListUsers.get(it.next()); 
+		for (Iterator<Integer> it = this.listUsers.keySet().iterator(); it.hasNext() ;) {
+			User us = this.listUsers.get(it.next()); 
 			str=str+us.toString()+"\n";
 		}
 		return str;

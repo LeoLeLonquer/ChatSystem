@@ -33,7 +33,7 @@ public class AllDestsTest {
 	User u3; 
 	Groupe g1; 
 	Groupe g2; 
-	
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -50,11 +50,11 @@ public class AllDestsTest {
 		IP1 = (Inet4Address) InetAddress.getLocalHost(); 
 		IP2 = (Inet4Address) InetAddress.getByName("192.168.11.2"); 
 		IP3 = (Inet4Address) InetAddress.getByName("192.168.11.3"); 
-		
+
 		u1 = new User("a", IP1, true); 
 		u2 = new User("b", IP2, true); 
 		u3 = new User("c", IP3, false); 
-		
+
 		g1 = new Groupe ("g1", 4); 
 		g2 = new Groupe ("g2", 5); 
 	}
@@ -88,12 +88,12 @@ public class AllDestsTest {
 		alldests.addUser(u1); 
 		alldests.addUser(u2); 
 		alldests.addUser(u3); 
-		
+
 		System.out.println("Test addUser: " ); 
 		System.out.println("Result to have: " + resultToHave.toString()); 
 		System.out.println("Result we have: " + alldests.getListUsers().toString()); 
 		System.out.println("");
-		
+
 		assertEquals(alldests.getListUsers().toString(), resultToHave.toString()); 
 		fail("Not yet implemented");
 	}
@@ -110,13 +110,13 @@ public class AllDestsTest {
 		resultToHave.put(5, g2); 
 		alldests.addGroup(g1); 
 		alldests.addGroup(g2); 
-		
+
 		System.out.println("Test addGroup: " ); 
 		System.out.println("Result to have: " + resultToHave.toString()); 
 		System.out.println("Result we have: " + alldests.getListGroups().toString()); 
 		System.out.println("");
 
-		
+
 		assertEquals(alldests.getListGroups().toString(),resultToHave.toString()); 
 	}
 
@@ -134,15 +134,14 @@ public class AllDestsTest {
 		alldests.addUser(u2); 
 		alldests.addUser(u3); 
 		alldests.removeUser(1);  //remove u1
-		
+
 		System.out.println("Test removeUser: " ); 
 		System.out.println("Result to have: " + resultToHave.toString()); 
 		System.out.println("Result we have: " + alldests.getListUsers().toString()); 
 		System.out.println("");
-		
+
 		assertEquals(alldests.getListUsers(),resultToHave); 
-		fail("Not yet implemented");	
-		}
+	}
 
 	/**
 	 * Test method for {@link model.AllDests#removeGroup(int)}.
@@ -156,13 +155,14 @@ public class AllDestsTest {
 		alldests.addGroup(g1); 
 		alldests.addGroup(g2); 
 		alldests.removeGroup(4); // remove g1 
-		
+
 		System.out.println("Test removeGroup: " ); 
 		System.out.println("Result to have: " + resultToHave.toString()); 
 		System.out.println("Result we have: " + alldests.getListGroups().toString()); 
 		System.out.println("");
-		
-		assertEquals(alldests.getListGroups(),resultToHave); 	}
+
+		assertEquals(alldests.getListGroups(),resultToHave); 	
+	}
 
 	/**
 	 * Test method for {@link model.AllDests#searchUser(int)}.
@@ -176,13 +176,14 @@ public class AllDestsTest {
 		alldests.addUser(u3); 
 		User resultToHave = u2; 
 		User resultWeHave = alldests.getUser(u2.getUserID());
-		
+
 		System.out.println("Test searchUser: " ); 
 		System.out.println("Result to have: " + resultToHave.toString() ); 
 		System.out.println("Result we have: " + resultWeHave.toString()); 
 		System.out.println("");
-		
-		assertEquals(resultWeHave,resultToHave); 	}
+
+		assertEquals(resultWeHave,resultToHave); 	
+	}
 
 	/**
 	 * Test method for {@link model.AllDests#searcGroup(int)}.
@@ -195,47 +196,12 @@ public class AllDestsTest {
 		alldests.addGroup(g2); 
 		Groupe resultToHave = g1; 
 		Groupe resultWeHave = alldests.searchGroup(4);
-		
+
 		System.out.println("Test searcGroup: " ); 
 		System.out.println("Result to have: " + resultToHave.toString()); 
 		System.out.println("Result we have: " + resultWeHave.toString()); 
 		System.out.println("");
-		
-		assertEquals(resultWeHave,resultToHave); 		}
-	
-	
-	
-	//la méthode searchby IP a été supprimée 
-//	/**
-//	 * Test method for {@link model.AllDests#searchByIP(Inet4Address IP)}.
-//	 */
-//	@Test
-//	public void testSearchByIP() {
-//		AllDests alldests = new AllDests();
-//
-//		alldests.addUser(u1); 
-//		alldests.addUser(u2); 
-//		alldests.addUser(u3); 
-//		
-//		User resultToHave = u3; 
-//		User resultWeHave = alldests.searchByIP(IP3); 
-//				
-//		System.out.println("Test searchByIP: " ); 
-//		System.out.println("Result to have: " + resultToHave.toString()); 
-//		System.out.println("Result we have: " + resultWeHave.toString()); 
-//		System.out.println("");
-//		
-//		assertEquals(resultWeHave.toString(), resultToHave.toString()); 
-//	}
 
-	/**
-	 * Test method for {@link java.lang.Object#finalize()}.
-	 */
-	
-	
-	@Test
-	public void testFinalize() {
-		fail("Not yet implemented");
+		assertEquals(resultWeHave,resultToHave); 
 	}
-
 }

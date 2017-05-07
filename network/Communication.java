@@ -19,12 +19,14 @@ public class Communication {
 	SystemState sysState;
 	ManagerUDP ManagerUDP;
 	public HashMap<Integer,ManagerTCP> listeManagerTCP ;
-	int listeningPort=15530;
+	int listeningPort;
 	int cptSocket=1;
+	private String perroquet="Perroquet";
 	
 	public Communication(SystemState sysState){
 		System.out.println("Démarrage comModule");
-		 this.sysState=sysState;
+		this.sysState=sysState;
+		this.listeningPort=15530;
 		try {
 			 this.ManagerUDP=new ManagerUDP(this);
 			 this.listeManagerTCP = new HashMap<Integer,ManagerTCP>();
@@ -94,14 +96,28 @@ public class Communication {
 	}
 	
 	public void sendTxtMessage(String str, String destPseudo ){
-		Message msg= new Message(DataType.Text, str, destPseudo,sysState.getLoggedUser().getPseudo());
+		String srcPseudo=sysState.getLoggedUser().getPseudo();  //TODO gestion du perroquet pas très belle
+		if (destPseudo.equals(sysState.getLoggedUser().getPseudo())){
+			destPseudo=perroquet;
+		}
+		else if(destPseudo.equals(perroquet)){
+			srcPseudo=perroquet;
+		}
+		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
 		int id= sysState.allDests.getUserID(destPseudo);
 		this.listeManagerTCP.get(id).sendMessage(msg);
 	}
 	
 	public void sendFileMessage(File file, String destPseudo){
+		String srcPseudo=sysState.getLoggedUser().getPseudo();  //TODO gestion du perroquet pas très belle
+		if (destPseudo.equals(sysState.getLoggedUser().getPseudo())){
+			destPseudo=perroquet;
+		}
+		else if(destPseudo.equals(perroquet)){
+			srcPseudo=perroquet;
+		}
 		int id= sysState.allDests.getUserID(destPseudo);
-		this.listeManagerTCP.get(id).sendFile(file,destPseudo,sysState.getLoggedUser().getPseudo());
+		this.listeManagerTCP.get(id).sendFile(file,destPseudo,srcPseudo);
 	}
 
 	// ******************partie manage***************************///
@@ -138,7 +154,6 @@ public class Communication {
 			
 			System.out.println("socket_created reçu");
 
-			
 			if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){//l'utilisateur n'existe pas dans notre table allDests
 				id= this.sysState.manageNewUser(ctrlMsg.getUserName(),ctrlMsg.getUserAdresse());
 				this.createManagerTCP(id,ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
@@ -154,6 +169,13 @@ public class Communication {
 					}
 					else {
 						System.out.println("!!!!!!! Deux utilisateurs avec le même nom !!!!!!!!!!!");
+					}
+				}
+				else { //TODO gestion du perroquet pas très belle
+					if (ctrlMsg.getUserName().equals(sysState.getLoggedUser().getPseudo())){//on reçoit un message de nous-mêmes
+						System.out.println("Création Perroquet");
+						id= this.sysState.manageNewUser(perroquet,ctrlMsg.getUserAdresse());
+						this.createManagerTCP(id,ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
 					}
 				}
 			}	

@@ -26,11 +26,15 @@ public class TestCommunication extends Thread{
 		System.out.println("start");
 		while(true){
 			try {
-				TimeUnit.SECONDS.sleep(5);
+				TimeUnit.SECONDS.sleep(1);
 				System.out.println("*********Liste des utilisateurs connectés*******");
 				System.out.print(this.sysState.allDests.toString());
 				System.out.println("************************************************");
+				TimeUnit.SECONDS.sleep(2);
 
+				System.out.println("Envoi message TCP");
+				sysState.comModule.sendTxtMessage("Coucou","toto");
+				sysState.comModule.sendTxtMessage("Coucou","Perroquet");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -16,7 +16,6 @@ public class Controller {
 
 	SystemState sysState;
 	//Graphics interface;
-	private AllDests ad;
 	private ArrayList<User> ListUsersForView;
 
 
@@ -28,7 +27,7 @@ public class Controller {
 	public static void main(String[] args) {
 		Controller controller = new Controller();
 		 LoginWindow win = new LoginWindow(controller, "Hello! ");
-		 }
+	}
 
 	//***************interface model-Controller************************
 
@@ -60,7 +59,7 @@ public class Controller {
 
 
 	 public void initUs (String pseudo){
-			SystemState sys = new SystemState(pseudo);
+			 this.sysState = new SystemState(pseudo);
 	 }
 
 	public void addConnectedUser (User newUs, ListUsers lu){

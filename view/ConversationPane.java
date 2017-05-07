@@ -1,7 +1,6 @@
 package view;
 import controller.*;
 import model.User;
-import trash.DisplayMessage;
 
 import java.awt.BorderLayout;
 import java.awt.Button;

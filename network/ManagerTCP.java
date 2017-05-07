@@ -141,7 +141,7 @@ public class ManagerTCP extends Thread{
 
 	public void sendMessage(Message msg){
 		try {
-			writer.writeObject((Message)msg);
+			writer.writeObject((Message) msg);
 			System.out.println("Message envoyé !");
 		} catch (IOException e) {
 			e.printStackTrace();

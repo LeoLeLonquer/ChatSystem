@@ -60,4 +60,9 @@ public class Conv {
 		return str;
 	}
 
+	public String readLastMessage() {
+		
+		return readMessage(getLastMessage());
+	}
+
 }

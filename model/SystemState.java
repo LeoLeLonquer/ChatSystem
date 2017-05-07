@@ -30,22 +30,9 @@ public class SystemState {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-
-		int idLoggedUser=manageNewUser(chosenName,localAdr);
-		this.loggedUser=allDests.getUser(idLoggedUser);
+		loggedUser= new User(chosenName,localAdr,true);
 		
-	
 		comModule=new Communication(this);
-		
-		
-		//AJOUT DU PERROQUET
-		//int idPerroquet=manageNewUser("perroquet",localAdr);
-		//int loggedUserPort = comModule.getPortOfUser(idLoggedUser);	
-		//this.comModule.createManagerTCP(idLoggedUser, null, 0);
-		//this.comModule.createManagerTCP(idPerroquet, localAdr, loggedUserPort);
-
-
-
 	}
 	
 	private void setLoggedUser (String chosenName, int id) throws UnknownHostException {
@@ -62,7 +49,7 @@ public class SystemState {
 	
 	public int manageNewUser(String userName, InetAddress adr) {
 		int id=0;
-		if (allDests.checkAvailable(userName)){	//le nouvel utilisateur n'ecistait pas avant
+		if (allDests.checkAvailable(userName)){	//le nouvel utilisateur n'existait pas avant
 			
 			User newUser = new User(userName,adr,true);
 			System.out.println("nouveau User : " + newUser.toString());
@@ -76,13 +63,16 @@ public class SystemState {
 				System.out.println("!!!!!!!Il existe déjà un utilisateur nommé "+userName+" !!!!!!!!!!");
 				id=-1;
 			}
-			else{
+			else{                                  //un utilisateur à ce nom n'est plus connecté
 				allDests.getUser(id).setIP(adr);
 				allDests.getUser(id).setStatus(true);
 			}
 		}
 		return id;
 	}
+	
+	
+
 
 	
 }
