@@ -17,7 +17,7 @@ public class TestAddUser {
 		TestAddUser tau = new TestAddUser(); 
 		
 				try {
-					Thread.sleep(7000);
+					Thread.sleep(3000);
 					
 					tau.itf.addNewUser("Marie");
 					

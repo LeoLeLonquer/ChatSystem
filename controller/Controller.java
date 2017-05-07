@@ -63,6 +63,15 @@ public class Controller {
 		return this.sysState.getLoggedUser(); 
 	}
 	
+	// transfers a message to the interface that will then display it 
+	public void transferMsgToView(String friendUser, String msg){
+		this.intf.receiveMsg(friendUser, msg);
+	}
+	
+	public void transferMsgToView(String friendUser, File file){
+		this.intf.receiveFile(friendUser, file);
+	}
+	
 	 
 	 public void initUs (String pseudo){ 
 			SystemState sys = new SystemState(pseudo); 
