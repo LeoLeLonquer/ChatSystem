@@ -81,7 +81,7 @@ public class ConversationPane extends JPanel implements ActionListener{
 		        		convo.append(currentUser + ": " + msg + "\n");
 					e.consume();
 					yourArea.setText("" );
-		        	//intf.transferMsgToController(currentUser, friendUser, msg); // msg transferred to controller 
+		        	intf.transferMsgToController(currentUser, friendUser, msg); // msg transferred to controller 
 
 		        }
 		    }
@@ -104,7 +104,7 @@ public class ConversationPane extends JPanel implements ActionListener{
         		this.convo.append(currentUser + ": " + msg + "\n");
 
 				this.msgArea.setText("");
-	        //	intf.transferMsgToController(this.currentUser, this.friendPseudo, msg); // msg transferred to controller 
+	        	intf.transferMsgToController(this.currentUser, this.friendPseudo, msg); // msg transferred to controller 
 
 		}
 		

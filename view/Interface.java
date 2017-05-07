@@ -29,12 +29,15 @@ public class Interface {
 	
 	public void launchListUsers(){
 			this.lu=new ListUsers(this.currentUs, this.controller.testListUsersView(), this);
+			//System.out.println("Avant de fermer: " + loginout);
 			this.lu.addWindowListener(new WindowAdapter() {
 	            @Override
 	            public void windowClosing(WindowEvent e) {
 	               JOptionPane jop = new JOptionPane(); 
 	               if (jop.showConfirmDialog(lu, "Are you sure you want to log out?" )== JOptionPane.YES_OPTION){
 	      	           loginout = true; 
+	      			//	System.out.println("Après : " + loginout);
+
 	            	   System.exit(0);
 	               }
 	               
