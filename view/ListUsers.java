@@ -19,6 +19,7 @@ public class ListUsers extends JFrame implements ActionListener {
 	 private boolean alreadyTalking = false; 
 	 private ArrayList<JButton> listButtons ; 
 	 private Controller controller;
+	 private ArrayList<String> pseudos; 
 
 	public ListUsers(Controller controller, String current){ 
 		listButtons = new ArrayList<JButton>(); 
@@ -26,45 +27,48 @@ public class ListUsers extends JFrame implements ActionListener {
 		this.controller = controller; 
 		 initComponents();
 	}
+	
+	public ListUsers(String current, ArrayList<String> pseudos){ 
+		listButtons = new ArrayList<JButton>(); 
+		this.currentUser=current; 
+		this.pseudos = pseudos; 
+		 initComponents();
+	}
 
-	public ArrayList<JButton> computeGrid (ArrayList<User> lu){ 
-		for (Iterator<User> it = lu.iterator() ; it.hasNext();){
-			User us = it.next(); 
-			JButton j = new JButton(us.getPseudo());
+	public ArrayList<JButton> computeGrid (ArrayList<String> lu){ 
+		for (Iterator<String> it = lu.iterator() ; it.hasNext();){
+			String us = it.next(); 
+			JButton j = new JButton(us);
 			this.listButtons.add(j);
 			this.add(j); 
 		}
 		return this.listButtons; 
 	}
 	
+	public ArrayList<JButton> getListButtons(){
+		return this.listButtons;
+	}
+	
 	
 	 private void initComponents() {
-	 listUs = new JLabel("Connected Users:"); 
-	 // communication with the controller:
-	 	controller.updateListUsers(this);  
-	 
-//	 userExample = new JButton("user1"); 
-	 	
-	 // configures the JFrame layout using a grid layout
+	 listUs = new JLabel("Connected Users:"); 	 	
 	 this.setLayout(new GridLayout(0,1));
 	 this.add(listUs); 
-	 //computeGrid(nvu.getListPseudos());
-	 computeGrid(this.controller.testListUsersView()); 
-	 for (Iterator<JButton> it= this.listButtons.iterator(); it.hasNext();){
-		JButton j = it.next(); 
-		j.addActionListener(this); 
+	 
+	 if (!this.pseudos.isEmpty()){
+		 computeGrid(this.pseudos);
+		 for (Iterator<JButton> it= this.listButtons.iterator(); it.hasNext();){
+				JButton j = it.next(); 
+				j.addActionListener(this); 
+			 }
 	 }
 
-	// this.add(userExample);
 	 this.setTitle("Welcome " + this.currentUser); 
-	 
-	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; // pcq par d�faut est en mode 
-	 
-	 // packs the fenetre: size is calculated
-//	 this.pack();
-	 this.setSize(300, 750);
+
+	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; 
+
+	 this.setSize(500, 900);
      this.setLocation(100, 20);
-	 // the JFrame is visible now
 	 this.setVisible(true);
 	 }
 	 
@@ -74,10 +78,10 @@ public class ListUsers extends JFrame implements ActionListener {
 			JButton b = it.next(); 
 			if (e.getSource()==b && !alreadyTalking){
 				alreadyTalking = true; 
-				Graphic g = new Graphic(this.controller, this.currentUser, b.getText() ); 
+				Graphic g = new Graphic(this.currentUser, b.getText() ); 
 			}
 		}
-
 	}
-	
+		
+
 }

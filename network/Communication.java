@@ -1,6 +1,5 @@
 package network;
 
-import controller.Controller;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -11,16 +10,14 @@ import java.util.HashMap;
 import network.Message.DataType;
 
 import model.SystemState;
-import model.User;
 
 public class Communication {
 	
-	Controller controller;
-	SystemState sysState;
-	ManagerUDP ManagerUDP;
-	public HashMap<Integer,ManagerTCP> listeManagerTCP ;
-	int listeningPort;
-	int cptSocket=1;
+	private SystemState sysState;
+	private ManagerUDP ManagerUDP;
+	private HashMap<Integer,ManagerTCP> listeManagerTCP ;
+	private int listeningPort;
+	private int cptSocket=1;
 	private String perroquet="Perroquet";
 	
 	public Communication(SystemState sysState){
@@ -28,45 +25,58 @@ public class Communication {
 		this.sysState=sysState;
 		this.listeningPort=15530;
 		try {
-			 this.ManagerUDP=new ManagerUDP(this);
-			 this.listeManagerTCP = new HashMap<Integer,ManagerTCP>();
+			ManagerUDP= new ManagerUDP(this);
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		listeManagerTCP=new HashMap<Integer,ManagerTCP>();
 		
 		try {
 			System.out.println("Envoi de hello");
 			ControlMessage ctrlMsg= this.createControlMessageWithLocalID(this.listeningPort, "hello");
-			this.ManagerUDP.sendBroadcastedControlMessage(ctrlMsg);
+			this.getManagerUDP().sendBroadcastedControlMessage(ctrlMsg);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
 	
 	
+	public int getListeningPort(){
+		return this.listeningPort;
+	}
 	
+	public ManagerUDP getManagerUDP() {
+		return ManagerUDP;
+	}
+
 	
-// ******************partie create***************************///
+	public HashMap<Integer,ManagerTCP> getListeManagerTCP() {
+		return listeManagerTCP;
+	}
+
+
+
+	// ******************partie create***************************///
 	public void createManagerTCP(int id,InetAddress adr, int port) {//on peut mettre adr à null et port à 0
 	
 		if (adr==null){ //si adr==null c'est seulement pour créer un nouveau serveur
 			System.out.println("!!!!!!!!!!!!!Serveur créé!!!!!!!!!!!!!");
 			int reservedPort= listeningPort+ cptSocket;
 			ManagerTCP managerTCP = new ManagerTCP(this,reservedPort);
-			if (listeManagerTCP.containsKey(id)){
-				listeManagerTCP.remove(id);
+			if (getListeManagerTCP().containsKey(id)){
+				getListeManagerTCP().remove(id);
 			}
-			listeManagerTCP.put(id, managerTCP);	
+			getListeManagerTCP().put(id, managerTCP);	
 			cptSocket++;
 		}
 		
 		else {														//sinon c'est pour créer un nouveau client
 			System.out.println("!!!!!!!!!!!!!client créé!!!!!!!!!!!!!");
 			ManagerTCP managerTCP = new ManagerTCP(this, adr,port);
-			if (listeManagerTCP.containsKey(id)){
-				listeManagerTCP.remove(id);
+			if (getListeManagerTCP().containsKey(id)){
+				getListeManagerTCP().remove(id);
 			}
-			listeManagerTCP.put(id, managerTCP);	
+			getListeManagerTCP().put(id, managerTCP);	
 			cptSocket++;
 		}
 	}
@@ -88,11 +98,11 @@ public class Communication {
 
 	public void closeManagerTCP(int id){
 		System.out.println("Début de demande de fermeture de la Socket TCP "+ id);
-		InetAddress adr=this.listeManagerTCP.get(id).clientSocks.getInetAddress();
-		ControlMessage ctrlMsgToSend=this.sysState.comModule.createControlMessageWithLocalID(this.listeningPort, "bye");
-		this.ManagerUDP.sendControlMessage(ctrlMsgToSend, adr, this.listeningPort);
+		InetAddress adr=this.getListeManagerTCP().get(id).getClientSocks().getInetAddress();
+		ControlMessage ctrlMsgToSend=createControlMessageWithLocalID(this.listeningPort, "bye");
+		this.getManagerUDP().sendControlMessage(ctrlMsgToSend, adr, this.listeningPort);
 		System.out.println("Fin de fermeture de la Socket TCP "+ id);
-		this.listeManagerTCP.get(id).close();
+		this.getListeManagerTCP().get(id).close();
 	}
 	
 	public void sendTxtMessage(String str, String destPseudo ){
@@ -104,8 +114,8 @@ public class Communication {
 			srcPseudo=perroquet;
 		}
 		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
-		int id= sysState.allDests.getUserID(destPseudo);
-		this.listeManagerTCP.get(id).sendMessage(msg);
+		int id= sysState.getAllDests().getUserID(destPseudo);
+		this.getListeManagerTCP().get(id).sendMessage(msg);
 	}
 	
 	public void sendFileMessage(File file, String destPseudo){
@@ -116,8 +126,8 @@ public class Communication {
 		else if(destPseudo.equals(perroquet)){
 			srcPseudo=perroquet;
 		}
-		int id= sysState.allDests.getUserID(destPseudo);
-		this.listeManagerTCP.get(id).sendFile(file,destPseudo,srcPseudo);
+		int id= sysState.getAllDests().getUserID(destPseudo);
+		this.getListeManagerTCP().get(id).sendFile(file,destPseudo,srcPseudo);
 	}
 
 	// ******************partie manage***************************///
@@ -132,18 +142,17 @@ public class Communication {
 			
 			System.out.println("Hello reçu");
 
-			
 			id=this.sysState.manageNewUser(ctrlMsg.getUserName(),ctrlMsg.getUserAdresse());// on crée un nouvel utilisateur s'il n'existe pas déjà sinon on l'jaoute si l'ancien utilisateur est déco
 			//TODO faire le check de id=-1
 			
 			this.createManagerTCP(id,null,0);
-			int localPort=listeManagerTCP.get(id).getPort();
+			int localPort=getListeManagerTCP().get(id).getLocalServerPort();
 
 			InetAddress destAdr= ctrlMsg.getUserAdresse();
 			int destPort =ctrlMsg.getPort();
 
 			ControlMessage ctrlMsgToSend = this.createControlMessageWithLocalID(localPort, "socket_created");
-			this.ManagerUDP.sendControlMessage(ctrlMsgToSend, destAdr,destPort);
+			this.getManagerUDP().sendControlMessage(ctrlMsgToSend, destAdr,destPort);
 			
 			System.out.println("Fin Hello");
 
@@ -154,18 +163,18 @@ public class Communication {
 			
 			System.out.println("socket_created reçu");
 
-			if (sysState.allDests.checkAvailable(ctrlMsg.getUserName())){//l'utilisateur n'existe pas dans notre table allDests
+			if (sysState.getAllDests().checkAvailable(ctrlMsg.getUserName())){//l'utilisateur n'existe pas dans notre table AllDests
 				id= this.sysState.manageNewUser(ctrlMsg.getUserName(),ctrlMsg.getUserAdresse());
 				this.createManagerTCP(id,ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
 			}
 			else {															//l'utilisateur existe déjà dans notre table allDests
 				id=ctrlMsg.getUserName().hashCode();
-				if (!sysState.allDests.getUser(id).getIP().equals(ctrlMsg.getUserAdresse())){
-					if (!sysState.allDests.getUser(id).getStatus()){//si l'utilisateur est déconnecté, mettre à jour
+				if (!sysState.getAllDests().getUser(id).getIP().equals(ctrlMsg.getUserAdresse())){
+					if (!sysState.getAllDests().getUser(id).getStatus()){//si l'utilisateur est déconnecté, mettre à jour
 						
-						sysState.allDests.getUser(id).setIP(ctrlMsg.getUserAdresse());
-						sysState.allDests.getUser(id).setStatus(true);
-						listeManagerTCP.get(id).setNewClientSocket(ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
+						sysState.getAllDests().getUser(id).setIP(ctrlMsg.getUserAdresse());
+						sysState.getAllDests().getUser(id).setStatus(true);
+						getListeManagerTCP().get(id).setNewClientSocket(ctrlMsg.getUserAdresse(),ctrlMsg.getPort());
 					}
 					else {
 						System.out.println("!!!!!!! Deux utilisateurs avec le même nom !!!!!!!!!!!");
@@ -184,9 +193,9 @@ public class Communication {
 		}
 		else if (order.equalsIgnoreCase("bye")){//un utilisateur se déconnecte
 			System.out.println("bye reçu ");
-			id=sysState.allDests.getUserID(ctrlMsg.getUserName());
-			this.listeManagerTCP.get(id).close();
-			this.sysState.allDests.getUser(id).setStatus(false);
+			id=sysState.getAllDests().getUserID(ctrlMsg.getUserName());
+			this.sysState.getAllDests().getUser(id).setStatus(false);
+			this.getListeManagerTCP().get(id).close();
 			System.out.println("fin bye");
 
 		}
@@ -195,33 +204,18 @@ public class Communication {
 	
 
 	public void manageTxtMessage(Message msg){
-		
-		if (msg.getType()==Message.DataType.Text){
-			String srcPseudo= msg.getSrcPseudo();
-			int id= sysState.allDests.getUserID(srcPseudo);
-			sysState.allDests.getUser(id).getConv().addMessage(msg);
-			System.out.println("srcPseudo : "+srcPseudo+" Message : "+ msg.getData());
-			//controller.notifyNewMessage(id);
-			}
+		sysState.manageTxtMessage(msg);
 	}
 		
 
 	public void manageFileMessage(Message receivedMsg,String path) {
-		
-		if (receivedMsg.getType()==Message.DataType.File){
-			String srcPseudo= receivedMsg.getSrcPseudo();
-			Message msg= new Message(DataType.File,path,receivedMsg.getDestPseudo(),srcPseudo);
-			
-			int id= sysState.allDests.getUserID(srcPseudo);
-			sysState.allDests.getUser(id).getConv().addMessage(msg);
-			controller.notifyNewMessageFromModel(id);
-			}		
+		sysState.manageFileMessage(receivedMsg, path);
 	}
 
 
-	public int getPortOfUser(int idLoggedUser) {
+	public int getPtOfUser(int idLoggedUser) {
 		
-		return listeManagerTCP.get(idLoggedUser).getPort() ;
+		return getListeManagerTCP().get(idLoggedUser).getLocalServerPort() ;
 	}
 	
 

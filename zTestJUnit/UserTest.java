@@ -1,4 +1,4 @@
-package model;
+package zTestJUnit;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import model.User;
 import network.Message;
 import network.ToolsCom;
 import network.Message.DataType;

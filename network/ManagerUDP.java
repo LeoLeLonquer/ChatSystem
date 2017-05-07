@@ -8,14 +8,14 @@ import java.net.SocketException;
 
 public class ManagerUDP extends Thread{
 	
-	Communication comModule;
-	DatagramSocket datagramSocket;
-	byte[] receiveData;
-	byte[] sendData;
+	private Communication comModule;
+	private DatagramSocket datagramSocket;
+	private byte[] receiveData;
+	private byte[] sendData;
 
 	public ManagerUDP(Communication comModule) throws SocketException{
 		this.comModule=comModule;
-		datagramSocket = new DatagramSocket(comModule.listeningPort);
+		datagramSocket = new DatagramSocket(comModule.getListeningPort());
 		receiveData = new byte[1024];
 		sendData = new byte[1024];
 		datagramSocket.setBroadcast(true);
@@ -64,7 +64,7 @@ public class ManagerUDP extends Thread{
 	
 	public void sendBroadcastedControlMessage(ControlMessage ctrlMsgToSend) throws IOException{
 		InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
-		this.sendControlMessage(ctrlMsgToSend,broadcastAddress,comModule.listeningPort);
+		this.sendControlMessage(ctrlMsgToSend,broadcastAddress,comModule.getListeningPort());
 		datagramSocket.setBroadcast(false);
 	}
 	

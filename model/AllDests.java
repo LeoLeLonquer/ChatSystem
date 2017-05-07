@@ -13,22 +13,6 @@ public class AllDests {
 		listUsers = new HashMap<Integer, User>() ; 
 		ListGroups = new HashMap <Integer, Groupe> (); 
 	}
-
-
-	// rechercher user
-	// lire ensemble de la liste (pour voir qui est co)
-	// ajouter un utilisateur, change
-	
-//	public void makeListeCo () {
-//		//for (int i = 0 ; i< this.ListDests.size() ; i++) {
-//			//if (this.ListDests.get(i).getStatus(ListDests.get(i)) ) {
-//		for (Iterator<User> iter = this.ListDests.iterator(); iter.hasNext(); ) {
-//			User us = iter.next();
-//		    if (us.getStatus(us)) { 
-//		    	this.ListCo.add(us); 
-//			}
-//		}
-//	}
 	
 	public HashMap<Integer,User> getListUsers(){
 		return this.listUsers; 
@@ -36,6 +20,19 @@ public class AllDests {
 	
 	public HashMap<Integer,Groupe> getListGroups(){
 		return this.ListGroups; 
+	}
+	
+	public User getUser(int id){ 
+		return this.listUsers.get(id);
+	}
+	
+	public int getUserID(String pseudo){
+		if (listUsers.containsKey(pseudo.hashCode())){
+			return pseudo.hashCode();
+			}
+		else {
+			return -1; 
+		}
 	}
 	
 	public void addUser(User us) { 
@@ -59,18 +56,6 @@ public class AllDests {
 		this.ListGroups.remove(id); 
 	}
 	
-	public User getUser(int id){ 
-		return this.listUsers.get(id);
-	}
-	
-	public int getUserID(String pseudo){
-		if (listUsers.containsKey(pseudo.hashCode())){
-			return pseudo.hashCode();
-			}
-		else {
-			return -1; 
-		}
-	}
 	
 	public Groupe searchGroup(int id){ 
 		return this.ListGroups.get(id); 
@@ -83,6 +68,22 @@ public class AllDests {
 		else {
 			return true;
 		}
+	}
+	
+	public HashMap<Integer,User> getHashMapConnectedUsers(){
+		HashMap<Integer,User> listConnectedUsers=new HashMap<Integer,User>();
+		
+		Iterator<User> it=this.listUsers.values().iterator();
+		
+		User us=null;
+		while(it.hasNext()){
+			us=it.next();
+			if (us.getStatus()){
+				listConnectedUsers.put(us.getUserID(), us);
+			}
+		}
+		
+		return listConnectedUsers;
 	}
 	
 	@Override

@@ -24,16 +24,24 @@ public class LoginWindow extends JFrame implements ActionListener{
 		 // a button to perform an action: e.g. say hello (TBD) */
 		 private JButton login;
 		 private String currentUser; 
-		 private Controller controller; 
-		 
-	 public LoginWindow (Controller controller, String titre) { 
+//		 private Controller controller; 
+		 private boolean connected; 
+		 private Interface itf; 
+	 
+	 public LoginWindow (Interface itf, String titre) { 
 		 super(titre); 
-		 this.controller= controller; 
+		 this.connected = false; 
+		 this.itf = itf; 
+		 
 		 initComponents();
 	 }
 	 
 	 public String getCurrentUs(){ 
 		 return this.currentUser;
+	 }
+	 
+	 public boolean getStatus(){
+		 return this.connected; 
 	 }
 
 	 /** Initializes the window components */
@@ -48,7 +56,7 @@ public class LoginWindow extends JFrame implements ActionListener{
 	 // a new button identified as OK
 	 login = new JButton("Log in");
 	 login.addActionListener(this); 
-	 PressEnter (this.currentUser, this.loginArea, this); 
+	 PressEnter (this.loginArea, this); 
 	 
 
 	 // configures the JFrame layout using a grid layout
@@ -67,16 +75,19 @@ public class LoginWindow extends JFrame implements ActionListener{
 	 }
 
 	 
-	 private void PressEnter(String currentUser, JTextArea loginArea, LoginWindow lw){ 
+	 private void PressEnter(JTextArea loginArea, LoginWindow lw){ 
 			this.loginArea.addKeyListener(new KeyListener(){
 			@Override
 			public void keyPressed(KeyEvent e) {		    	
 				if(e.getKeyCode() == KeyEvent.VK_ENTER){					
+					String currentUser = loginArea.getText(); 
+					lw.connected = true; 
+					lw.currentUser= currentUser; 
+					lw.itf.setCurrentUs(currentUser);
+					lw.itf.launchListUsers();
+						//ListUsers checkList =  new ListUsers(currentUser, TestView.uneListeTest ());
+				
 
-			controller.initUs(currentUser);
-			 System.out.print(currentUser);
-
-				ListUsers checkList = new ListUsers(controller, currentUser);
 				lw.setVisible(false);
 				}		
 			}
@@ -93,11 +104,12 @@ public class LoginWindow extends JFrame implements ActionListener{
 	//action performed 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==login ) {
-
-				controller.initUs(this.currentUser);				
-				ListUsers checkList = new ListUsers(this.controller, this.currentUser);
-				this.setVisible(false);
-				
+			this.currentUser = this.loginArea.getText(); 
+			this.connected = true; 
+//			ListUsers checkList = new ListUsers(this.currentUser, TestView.uneListeTest ());
+			this.itf.launchListUsers();
+			this.itf.setCurrentUs(currentUser);
+			this.setVisible(false);		
 			
 		}
 	}

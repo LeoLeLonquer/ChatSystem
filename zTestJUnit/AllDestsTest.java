@@ -1,10 +1,12 @@
 /**
  * 
  */
-package model;
+package zTestJUnit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import model.AllDests; 
+import model.AllDests;
+import model.Groupe;
+import model.User;
 
 //import static org.junit.Assert.*;
 

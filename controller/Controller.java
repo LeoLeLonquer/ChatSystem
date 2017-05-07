@@ -1,113 +1,105 @@
 package controller;
 
 import java.io.File;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-
-import javax.swing.JButton;
+import java.util.Iterator;
 
 import model.*;
-import view.ListUsers;
-import view.LoginWindow;
+import view.Interface;
 
 public class Controller {
 
-	SystemState sysState;
-	//Graphics interface;
-	private ArrayList<User> ListUsersForView;
+	private SystemState sysState;
+	private Interface itf;
 
-
-	Controller(){
+	public Controller(){
 
 	}
 
 
-	public static void main(String[] args) {
-		Controller controller = new Controller();
-		 LoginWindow win = new LoginWindow(controller, "Hello! ");
+	//***************Appel depuis View ************************
+
+	public void initUs (String pseudo){ 
+		sysState = new SystemState(this,pseudo); 
 	}
-
-	//***************interface model-Controller************************
-
-	public void notifyNewMessageFromModel(int id) {
-
+	
+	public void sendMessage (String srcUser, String destUser, String msg){
+		sysState.sendMessage(srcUser, destUser, msg);
 	}
+	
 
-
-
-	//**************************************************************
-
-	//***************interface view-Controller************************
-
-	public void sendMessage (String current, String destination, String text){
-
-	}
-
-	public void sendFile (String current, String destination, File file){
-
-	}
-
-	public void addMsgToLog (String text, File log){ // en m�me temps que le msg est load� dans la convo, il est ajout� dans le log
-
-	}
-
-	public User getCurrentUser(){
-		return this.sysState.getLoggedUser();
+	public void sendFile (String srcUser, String destUser, File file){ 
+		sysState.sendFile(srcUser, destUser, file);
 	}
 
 
-	 public void initUs (String pseudo){
-			 this.sysState = new SystemState(pseudo);
-	 }
-
-	public void addConnectedUser (User newUs, ListUsers lu){
-
+	public boolean askStatusOf(String user){
+		boolean status = sysState.getAllDests().getUser(user.hashCode()).getStatus(); 
+		return status; 
 	}
 
-	public void updateListUsers(ListUsers lu){
-
+	public User getCurrentUser(){ 
+		return this.sysState.getLoggedUser(); 
 	}
 
-	public ArrayList<User> getListPseudos (){
-		return this.ListUsersForView;
+	public void logOutFromLoggedUser(){
+		sysState.logOutLoggedUser();
 	}
-
-	public ArrayList<User> testListUsersView(){
-		Inet4Address IP1;
-		Inet4Address IP2;
-		Inet4Address IP3;
-		User u1;
-		User u2;
-		User u3;
-		ArrayList<User> al = new ArrayList<User>();
-
-		try {
-			IP1 = (Inet4Address) InetAddress.getLocalHost();
-			IP2 = (Inet4Address) InetAddress.getByName("192.168.11.2");
-			IP3 = (Inet4Address) InetAddress.getByName("192.168.11.3");
-
-
-			u1 = new User("Does", IP1, true);
-			u2 = new User("It", IP2, true);
-			u3 = new User("Work?", IP3, false);
-
-			al.add(u1);
-			al.add(u2);
-			al.add(u3);
-
-		} catch (UnknownHostException e) {
-			System.out.println("ERROR: Unkown Host ");
+	
+	
+	public ArrayList <String> getListOfConnectedUsers (){
+		ArrayList<String> al = new ArrayList<String>();
+		
+		String pseudo="";
+		Iterator<User> it=sysState.getAllDests().getHashMapConnectedUsers().values().iterator();
+		
+		while(it.hasNext()){
+			pseudo=it.next().getPseudo();
+			al.add(pseudo);
 		}
 		return al;
 	}
 
+	
+	//***************Appel depuis Model************************
 
-//	public void askConv(int id){
-//
-//	}
+	
+	public void notifyNewMessageFromModel(String pseudo, String msg) {
+		itf.receiveMsg(pseudo,msg);
+	}
 
+
+	public void notifyNewUser(String pseudo){
+		itf.addNewUser(pseudo);
+	}
+	
+	public void notifyLogoutUser(String pseudo){
+		itf.removeUser(pseudo);
+	}
+
+	/*************************************** TEST METHODS ************************************/
+
+	// makes a list of connected users upon first connecting 
+	public ArrayList<String> testListUsersEmpty (){ 
+		ArrayList<String> al = new ArrayList<String>(); 
+		return al; 
+	}
+
+	public ArrayList<String> testListUsersView(){
+		String u1; 
+		String u2; 
+		String u3; 
+		ArrayList<String> al = new ArrayList<String>(); 	
+
+		u1 = "Does";
+		u2 ="It"; 
+		u3 = "Work?"; 
+
+		al.add(u1); 
+		al.add(u2); 
+		al.add(u3); 
+		return al; 
+	}
 
 
 

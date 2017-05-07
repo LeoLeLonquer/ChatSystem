@@ -20,9 +20,9 @@ import network.Message.DataType;
 
 
 public class ManagerTCP extends Thread{
-	ServerSocket serverSocks;
-	public Socket clientSocks; 
-	int port ;
+	private ServerSocket serverSocks;
+	private Socket clientSocks; 
+	private int localServerPort ;
 	boolean connected;
 	Communication comModule;
 
@@ -31,13 +31,13 @@ public class ManagerTCP extends Thread{
 
 	int type;
 
-	public ManagerTCP(Communication comModule, int port){ //permet de créer un serveurTCP qui créera ensuite un clientTCP
+	public ManagerTCP(Communication comModule, int localServerPort){ //permet de créer un serveurTCP qui créera ensuite un clientTCP
 		this.comModule=comModule;
-		this.port=port;
+		this.localServerPort=localServerPort;
 		this.connected=false;
 		try {
 			this.type=1;
-			serverSocks= new ServerSocket(port);
+			serverSocks= new ServerSocket(localServerPort);
 		} catch (IOException e) {
 			System.out.println("Erreur lors de la création du serveur");
 			e.printStackTrace();
@@ -46,13 +46,13 @@ public class ManagerTCP extends Thread{
 	}
 
 
-	public ManagerTCP(Communication comModule, InetAddress IP, int port) { //permet de créer un clientTCP
+	public ManagerTCP(Communication comModule, InetAddress destIP, int destPort) { //permet de créer un clientTCP
 		this.comModule=comModule;
-		this.port=port;
+		this.localServerPort=-1;
 		this.type=2;
 		try {
 			this.serverSocks=null;
-			this.clientSocks= new Socket(IP,port);
+			this.clientSocks= new Socket(destIP,destPort);
 			this.connected=true;
 			writer = new ObjectOutputStream(this.clientSocks.getOutputStream());
 		} catch (IOException e) {
@@ -126,10 +126,17 @@ public class ManagerTCP extends Thread{
 		}
 	}
 
-
+	public Socket getClientSocks() {
+		return this.clientSocks;
+	}
+	
+	public int getLocalServerPort() {
+		return this.localServerPort;
+	}
+	
 	public void setNewClientSocket(InetAddress IP, int port) {
 		try {
-			this.port=port;
+			this.localServerPort=-1;
 			this.clientSocks= new Socket(IP,port);
 			writer = new ObjectOutputStream(clientSocks.getOutputStream());
 			reader = new ObjectInputStream(clientSocks.getInputStream());
@@ -187,11 +194,6 @@ public class ManagerTCP extends Thread{
 		}
 	}
 
-
-	public int getPort() {
-		return this.port;
-	}
-
 	public void close(){
 		try {
 			this.connected=false;
@@ -206,5 +208,7 @@ public class ManagerTCP extends Thread{
 		}
 		this.interrupt();
 	}
+
+
 
 }
