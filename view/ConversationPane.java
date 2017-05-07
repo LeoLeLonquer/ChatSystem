@@ -63,6 +63,10 @@ public class ConversationPane extends JPanel implements ActionListener{
          gb.setConstraints(pane2, c);
          add(pane2);
      }
+	 
+	 public JTextArea getConvoTextArea(){
+		 return this.convo; 
+	 }
 	
 	private void DisplayMessage(String currentUser, String friendUser, JButton send, 
 				JTextArea yourArea, JTextArea convo){ 
@@ -75,9 +79,10 @@ public class ConversationPane extends JPanel implements ActionListener{
 		        	String msg = yourArea.getText(); 
 		        	if (msg!= null)
 		        		convo.append(currentUser + ": " + msg + "\n");
-		        	intf.transferMsgToController(currentUser, friendUser, msg); // msg transferred to controller 
 					e.consume();
 					yourArea.setText("" );
+		        	//intf.transferMsgToController(currentUser, friendUser, msg); // msg transferred to controller 
+
 		        }
 		    }
 
@@ -97,9 +102,10 @@ public class ConversationPane extends JPanel implements ActionListener{
 			String msg = this.msgArea.getText(); 
         	if (msg!= null)
         		this.convo.append(currentUser + ": " + msg + "\n");
-        	intf.transferMsgToController(this.currentUser, this.friendPseudo, msg); // msg transferred to controller 
 
 				this.msgArea.setText("");
+	        //	intf.transferMsgToController(this.currentUser, this.friendPseudo, msg); // msg transferred to controller 
+
 		}
 		
 	}

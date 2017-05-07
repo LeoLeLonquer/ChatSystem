@@ -20,18 +20,15 @@ public class ListUsers extends JFrame implements ActionListener {
 	 private ArrayList<JButton> listButtons ; 
 	 private Controller controller;
 	 private ArrayList<String> pseudos; 
-
-	public ListUsers(Controller controller, String current){ 
-		listButtons = new ArrayList<JButton>(); 
-		this.currentUser=current; 
-		this.controller = controller; 
-		 initComponents();
-	}
+	 private ConversationPane cp; 
+	 private Interface intf; 
 	
-	public ListUsers(String current, ArrayList<String> pseudos){ 
+	public ListUsers(String current, ArrayList<String> pseudos, Interface intf){ 
 		listButtons = new ArrayList<JButton>(); 
 		this.currentUser=current; 
 		this.pseudos = pseudos; 
+		this.intf = intf; 
+
 		 initComponents();
 	}
 
@@ -65,22 +62,27 @@ public class ListUsers extends JFrame implements ActionListener {
 	 }
 
 	 this.setTitle("Welcome " + this.currentUser); 
-	 
-	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ; 
-	 
 
 	 this.setSize(500, 900);
      this.setLocation(100, 20);
 	 this.setVisible(true);
+	 this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE) ; //instead, the close button will be handled by the interface 
+
 	 }
 	 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		for (Iterator<JButton> it = this.listButtons.iterator(); it.hasNext(); ){
-			JButton b = it.next(); 
-			if (e.getSource()==b && !alreadyTalking){
-				alreadyTalking = true; 
-				Graphic g = new Graphic(this.currentUser, b.getText() ); 
+		
+			if (this.listButtons.contains(e.getSource())) {
+				for (Iterator<JButton> it = this.listButtons.iterator(); it.hasNext(); ){
+					JButton b = it.next(); 
+					if (e.getSource() == b ) { 
+						alreadyTalking = true; 
+
+						Graphic g = new Graphic("convo" , this.currentUser, b.getText() , cp, intf); 
+						g.start();
+					}
+	
 			}
 		}
 	}

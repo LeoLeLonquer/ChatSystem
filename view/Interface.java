@@ -1,8 +1,13 @@
 package view;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+
 import javax.swing.JButton;
 
 import controller.Controller;
+import javax.swing.*; 
 
 public class Interface {
 	
@@ -12,15 +17,39 @@ public class Interface {
 	private String currentUs;
 	private String friendUs; 
 	private Controller controller; 
+	private JOptionPane jop; 
+	private static boolean loginout; 
 	
 	public Interface(){
 		this.controller = new Controller(); 
 		this.lw = new LoginWindow(this, "Chat System!"); 		
+		loginout = false; 
 		this.currentUs = lw.getCurrentUs(); 
 	}
 	
 	public void launchListUsers(){
-			this.lu=new ListUsers(this.currentUs, this.controller.testListUsersEmpty());
+			this.lu=new ListUsers(this.currentUs, this.controller.testListUsersView(), this);
+			this.lu.addWindowListener(new WindowAdapter() {
+	            @Override
+	            public void windowClosing(WindowEvent e) {
+	               JOptionPane jop = new JOptionPane(); 
+	               if (jop.showConfirmDialog(lu, "Are you sure you want to log out?" )== JOptionPane.YES_OPTION){
+	      	           loginout = true; 
+	            	   System.exit(0);
+	               }
+	               
+	            }
+
+	            @Override
+	            public void windowClosed(WindowEvent e) {
+	            }
+
+	        });
+
+	}
+	
+	public void setLoginoutTrue (){
+		this.loginout = true; 
 	}
 	
 	public Graphic getGraphic() {
@@ -65,17 +94,21 @@ public class Interface {
 		this.controller.sendMessage(source, dest, msg);
 	}
 	
-	public void transferFileToController(){
-		
+	public void transferFileToController(String source, String dest, File file){
+		this.controller.sendFile(source, dest, file);
 	}
 	
 	public void receiveMsg(String friendUser, String message){
-		// display msg: append in graphic's convopane 
+		this.g.getConvoPane().getConvoTextArea().append(friendUser + ": " + message);
 	}
 	
-	public void notifyLogout(){ // view tells controller that currentUser just logged out 
-		// mini window
-		//signal to controller 
+	public void receiveFile(String friendUser, File file){
+		this.g.getConvoPane().getConvoTextArea().append(friendUser + "send " + file.getName());
+		// click on file to open it?? 
+	}
+	
+	public boolean notifyLogout(){ 
+		return loginout ; 
 	}
 
 }
