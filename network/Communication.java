@@ -190,13 +190,12 @@ public class Communication {
 				}
 			}	
 			System.out.println("Fin socket_created");
-
 		}
 		else if (order.equalsIgnoreCase("bye")){//un utilisateur se déconnecte
 			System.out.println("bye reçu ");
 			id=sysState.getAllDests().getUserID(ctrlMsg.getUserName());
 			this.sysState.getAllDests().getUser(id).setStatus(false);
-			this.getListeManagerTCP().get(id).close();
+			//this.getListeManagerTCP().get(id).close(); 
 			System.out.println("fin bye");
 
 		}
@@ -215,7 +214,6 @@ public class Communication {
 
 
 	public int getPtOfUser(int idLoggedUser) {
-		
 		return getListeManagerTCP().get(idLoggedUser).getLocalServerPort() ;
 	}
 	

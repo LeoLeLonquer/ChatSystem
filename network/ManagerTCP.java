@@ -88,6 +88,7 @@ public class ManagerTCP extends Thread{
 
 				//TODO ici on mettait un reader.available>0 pour vérifier si truc à lire et pouvoir facilement fermer la socket 
 				//mais en fait ça empêche de lire tout message
+				
 				Object obj=reader.readObject(); 
 				Message receivedMsg=null;
 				try{

@@ -51,19 +51,24 @@ public class SystemState {
 
 	public void logOutLoggedUser(){
 		ControlMessage ctrlMsg=comModule.createControlMessageWithLocalID(comModule.getListeningPort(), "bye");
-		try {
-			comModule.getManagerUDP().sendBroadcastedControlMessage(ctrlMsg);
-			comModule.getManagerUDP().closeSocket();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
-//		String pseudo="";
-//		Iterator<User> it=allDests.getListUsers().values().iterator();
-//		while(it.hasNext()){
-//			pseudo=it.next().getPseudo();
-//			comModule.getListeManagerTCP().get(pseudo.hashCode()).close();
-//		}
+		Iterator<User> it=allDests.getListUsers().values().iterator();
+		User us;
+		while(it.hasNext()){
+			us=it.next();
+			comModule.getManagerUDP().sendControlMessage(ctrlMsg, us.getIP(), comModule.getListeningPort());
+		}
+	//	comModule.getManagerUDP().interrupt();
+		//comModule.getManagerUDP().closeSocket();
+
+
+
+		//		String pseudo="";
+		//		Iterator<User> it=allDests.getListUsers().values().iterator();
+		//		while(it.hasNext()){
+		//			pseudo=it.next().getPseudo();
+		//			comModule.getListeManagerTCP().get(pseudo.hashCode()).close();
+		//		}
 
 	}
 

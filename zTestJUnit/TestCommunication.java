@@ -45,21 +45,25 @@ public class TestCommunication extends Thread{
 
 	public void run(){
 		System.out.println("start");
-		//while(true){
+		while(true){
 			try {
 				TimeUnit.SECONDS.sleep(1);
 				System.out.println("*********Liste des utilisateurs connectés*******");
 				System.out.print(this.sysState.getAllDests().toString());
 				System.out.println("************************************************");
 				TimeUnit.SECONDS.sleep(1);
+			
+				sysState.sendMessage("toto","toto","Coucou");
 
-				System.out.println("Envoi message TCP");
+				sysState.logOutLoggedUser();
+
+//				System.out.println("Envoi message TCP");
 //				sysState.getComModule().sendTxtMessage("Coucou","toto");
 //				sysState.getComModule().sendTxtMessage("Coucou","Perroquet");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		//}
+		}
 
 		//TEST ENVOI DE MESSAGE
 
@@ -67,16 +71,15 @@ public class TestCommunication extends Thread{
 		//  sysState.comModule.sendTxtMessage("Coucou","toto");
 
 			
-		System.out.println("Envoi message TCP");
+//		System.out.println("Envoi message TCP");
 		
-		sysState.sendMessage("toto","toto","Coucou");
+//		sysState.sendMessage("toto","toto","Coucou");
 		//Erreur quand on envoie deux 
 																		//fichiers trop lourds à la suite
 
 //		sysState.sendMessage("toto","toto","Coucou");
-		sysState.sendFile("toto","toto",new File("./testdir/304.jpg"));
+		//sysState.sendFile("toto","toto",new File("./testdir/304.jpg"));
 	
-		sysState.logOutLoggedUser();
 
 
 		//			

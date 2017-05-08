@@ -12,13 +12,15 @@ public class ManagerUDP extends Thread{
 	private DatagramSocket datagramSocket;
 	private byte[] receiveData;
 	private byte[] sendData;
-
+	boolean isOn;
+	
 	public ManagerUDP(Communication comModule) throws SocketException{
 		this.comModule=comModule;
 		datagramSocket = new DatagramSocket(comModule.getListeningPort());
 		receiveData = new byte[1024];
 		sendData = new byte[1024];
 		datagramSocket.setBroadcast(true);
+		isOn=true;
 		start();
 	}
 	
@@ -28,12 +30,14 @@ public class ManagerUDP extends Thread{
 		receiveData = new byte[1024];
 		sendData = new byte[1024];
 		datagramSocket.setBroadcast(true);
+		isOn=true;
 		start();
 	}
 	
 	public void run(){
-		while(true){
+		while(isOn){
 			System.out.println("Début de réception de packet UDP");
+			
 			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			try {
 				datagramSocket.receive(receivePacket);
@@ -63,13 +67,17 @@ public class ManagerUDP extends Thread{
 	}
 	
 	public void sendBroadcastedControlMessage(ControlMessage ctrlMsgToSend) throws IOException{
+//		if (!datagramSocket.getBroadcast()){ //TODO ceci ne marche pas par la magie du seigneur
+//			datagramSocket.setBroadcast(true);
+//		}
 		InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
 		this.sendControlMessage(ctrlMsgToSend,broadcastAddress,comModule.getListeningPort());
 		datagramSocket.setBroadcast(false);
 	}
 	
 	public void closeSocket(){
-		datagramSocket.close();
+		isOn=false;
+		datagramSocket.close();		
 	}
 	
 
