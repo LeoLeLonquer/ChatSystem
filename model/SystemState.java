@@ -101,7 +101,7 @@ public class SystemState {
 			System.out.println("nouveau User : " + newUser.toString());
 			allDests.addUser(newUser);
 			id=userName.hashCode();
-			controller.notifyNewUser(userName);
+			controller.notifyNewUser(newUser.getPseudo());
 
 		}
 		else {															//le nouvel utilisateur existait déjà avant

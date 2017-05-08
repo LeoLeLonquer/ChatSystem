@@ -141,7 +141,7 @@ public class Communication {
 		if (order.equalsIgnoreCase("hello")){ //on reçoit un message d'un explorateur
 			
 			System.out.println("Hello reçu");
-
+			System.out.println("Hello from"+ctrlMsg.getUserName());
 			id=this.sysState.manageNewUser(ctrlMsg.getUserName(),ctrlMsg.getUserAdresse());// on crée un nouvel utilisateur s'il n'existe pas déjà sinon on l'jaoute si l'ancien utilisateur est déco
 			//TODO faire le check de id=-1
 			

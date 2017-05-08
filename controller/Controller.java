@@ -13,14 +13,19 @@ public class Controller {
 	private Interface itf;
 
 	public Controller(){
-
+		
 	}
+	
 
+	public void setInterface(Interface itf){
+		this.itf=itf;
+	}
 
 	//***************Appel depuis View ************************
 
 	public void initUs (String pseudo){ 
 		sysState = new SystemState(this,pseudo); 
+
 	}
 	
 	public void sendMessage (String srcUser, String destUser, String msg){
@@ -66,11 +71,15 @@ public class Controller {
 	
 	public void notifyNewMessageFromModel(String pseudo, String msg) {
 		itf.receiveMsg(pseudo,msg);
+		System.out.println("Message transmis à la view");
 	}
 
 
 	public void notifyNewUser(String pseudo){
-		itf.addNewUser(pseudo);
+		System.out.println("begin NotifyNewUser");
+		System.out.println("Pseudo : "+pseudo);
+		this.itf.addNewUser(pseudo);
+		System.out.println("End NotifyNewUser");
 	}
 	
 	public void notifyLogoutUser(String pseudo){

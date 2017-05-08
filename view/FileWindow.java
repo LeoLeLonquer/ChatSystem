@@ -13,6 +13,7 @@ public class FileWindow implements ActionListener{
 	private JButton sendFiles; 
 	private final JFileChooser jfc; 
 	private JTextArea convo; 
+	private Interface itf; 
 	
 	public FileWindow (JButton sendFile, JTextArea convo){ 
 		jfc = new JFileChooser(); 
@@ -29,6 +30,7 @@ public class FileWindow implements ActionListener{
 		        if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            File file = jfc.getSelectedFile();
 		            this.convo.append("File sent: " + file.getName() + "\n");
+		            itf.transferFileToController(itf.getCurrentUs(), itf.getFriendUs(), file); // to itf, who will transfer it to controller
 		        } else {
 		            this.convo.append("Operation cancelled by user. \n" ); // should be in log but pff 
 		        }

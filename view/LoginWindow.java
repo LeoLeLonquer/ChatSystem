@@ -85,6 +85,7 @@ public class LoginWindow extends JFrame implements ActionListener{
 					lw.currentUser= currentUser; 
 					lw.itf.setCurrentUs(currentUser);
 					lw.itf.launchListUsers();
+					lw.itf.askInitSys(currentUser);
 						//ListUsers checkList =  new ListUsers(currentUser, TestView.uneListeTest ());
 				
 
@@ -104,13 +105,16 @@ public class LoginWindow extends JFrame implements ActionListener{
 	//action performed 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==login ) {
-			this.currentUser = this.loginArea.getText(); 
+			String currentUser = this.loginArea.getText(); 
+			this.currentUser = currentUser;
 			this.connected = true; 
 //			ListUsers checkList = new ListUsers(this.currentUser, TestView.uneListeTest ());
-			this.itf.launchListUsers();
 			this.itf.setCurrentUs(currentUser);
+			itf.launchListUsers();
+			itf.askInitSys(currentUser);
 			this.setVisible(false);		
 			
+
 		}
 	}
 
