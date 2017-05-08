@@ -53,16 +53,17 @@ public class SystemState {
 		ControlMessage ctrlMsg=comModule.createControlMessageWithLocalID(comModule.getListeningPort(), "bye");
 		try {
 			comModule.getManagerUDP().sendBroadcastedControlMessage(ctrlMsg);
+			comModule.getManagerUDP().closeSocket();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		String pseudo="";
-		Iterator<User> it=allDests.getListUsers().values().iterator();
-		while(it.hasNext()){
-			pseudo=it.next().getPseudo();
-			comModule.getListeManagerTCP().get(pseudo.hashCode()).close();
-		}
+//		String pseudo="";
+//		Iterator<User> it=allDests.getListUsers().values().iterator();
+//		while(it.hasNext()){
+//			pseudo=it.next().getPseudo();
+//			comModule.getListeManagerTCP().get(pseudo.hashCode()).close();
+//		}
 
 	}
 
@@ -81,8 +82,10 @@ public class SystemState {
 
 	public void sendFile (String srcUser, String destUser, File file){ 
 		if (allDests.getUser(destUser.hashCode()).getStatus()){
+			System.out.println("Début envoi Fichier");
 			comModule.sendFileMessage(file, destUser);
 			allDests.getUser(destUser.hashCode()).getConv().addMessage(new Message(DataType.File,file.getName(),destUser,srcUser));
+			System.out.println("Fin envoi Fichier");
 		}
 		else {
 			String str= "Utilisateur déconnecté, envoi impossible";
@@ -134,8 +137,9 @@ public class SystemState {
 		Message msg= new Message(DataType.File,path,receivedMsg.getDestPseudo(),srcPseudo);
 		int id= getAllDests().getUserID(srcPseudo);
 		getAllDests().getUser(id).getConv().addMessage(msg);
+		System.out.println("LE FICHIER A ETE RECU");
 		controller.notifyNewMessageFromModel(srcPseudo,msg.getData());
-
+		comModule.sendTxtMessage("Fichier "+path+" bien reçu",srcPseudo);
 	}
 
 }

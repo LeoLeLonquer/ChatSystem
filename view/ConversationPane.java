@@ -89,14 +89,10 @@ public class ConversationPane extends JPanel implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("1");
 		if (e.getSource()==this.sendMsg){ 	
-			System.out.println("2");
 			String msg = this.msgArea.getText(); 
-			System.out.println("3");
 			if (!msg.equals("")){
 				this.convo.append(currentUser + ": " + msg + "\n");
-				System.out.println("Moi aussi je passe par là");
 				this.msgArea.setText("");
 				intf.transferMsgToController(this.currentUser, this.friendPseudo, msg); // msg transferred to controller 
 			}
@@ -187,7 +183,7 @@ public class ConversationPane extends JPanel implements ActionListener{
 
 
 		DisplayMessage(this.currentUser, this.friendPseudo, send, text, convo); 
-		FileWindow fwin = new FileWindow (senfFiles, convo);
+		FileWindow fwin = new FileWindow (this.intf,this.friendPseudo,senfFiles, convo);
 
 		////////////////////////////////////
 

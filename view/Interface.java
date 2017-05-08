@@ -86,28 +86,12 @@ public class Interface {
 	}
 	
 	public void addNewUser (String pseudoNew){
-		System.out.println("pseudo in Interface : "+pseudoNew);
 		JButton j = new JButton (pseudoNew); 
-		System.out.println("1");
 		j.addActionListener(this.lu);
-		System.out.println("2");
-		if (j.equals(null)){
-			System.out.println("Erreur j");
-		}
-		if (this.lu.equals(null)){
-			System.out.println("Erreur lu");
-		}
-		if (this.lu.getListButtons().equals(null)){
-			System.out.println("Erreur liste");
-		}
 		this.lu.getListButtons().add(j); // gotta add it bc the actionperformed method in ListUsers checks the list 
-		System.out.println("3");
 		this.lu.add(j);
-		System.out.println("4");
 		this.lu.revalidate();
-		System.out.println("5");
 		this.lu.repaint();
-		System.out.println("6");
 	}
 	
 	public void transferMsgToController(String source, String dest, String msg){
@@ -120,7 +104,6 @@ public class Interface {
 	
 	public void receiveMsg(String friendUser, String message){
 		this.listGraphics.get(friendUser.hashCode()).getConvoPane().update( friendUser,  message);
-		System.out.println("Coucou je passe par là");
 	}
 	
 	public void receiveFile(String friendUser, File file){

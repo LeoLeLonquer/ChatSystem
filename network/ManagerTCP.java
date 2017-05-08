@@ -85,36 +85,55 @@ public class ManagerTCP extends Thread{
 
 		while(connected){
 			try {
-				
-				//TODO ici on mettait un reader.available>0 pour vérifier si truc à lire et pouvoir facilement fermer la socket 
-				 //mais en fait ça empêche de lire tout message
-				Message receivedMsg= (Message) reader.readObject(); 
 
+				//TODO ici on mettait un reader.available>0 pour vérifier si truc à lire et pouvoir facilement fermer la socket 
+				//mais en fait ça empêche de lire tout message
+				Object obj=reader.readObject(); 
+				Message receivedMsg=null;
+				try{
+					receivedMsg= (Message) obj; 
+				}
+				catch (java.lang.ClassCastException e){
+					System.out.println("Message reçu qui est un string : "+ (String) obj);
+					e.printStackTrace();
+				}
 				if (receivedMsg.getType()==DataType.Text){
 					comModule.manageTxtMessage(receivedMsg);
 				}
 				else if (receivedMsg.getType()==DataType.File){
 					// TODO demande-t-on à l'utilisateur s'il veut télécharger le fichier ?
 
-
-
 					Message msgWithFileLength = (Message) reader.readObject();
 					int length = Integer.parseInt(msgWithFileLength.getData());//le deuxième message contient la taille totale du fichier
 
 					//le message est enregistré dans le dossier courant de l'utilisateur
 					String path=System.getProperty("user.dir") + "/" + receivedMsg.getData();//le premier message contient le nom du fichier
-
+					File file= new File(path);
+					if (file.exists()){
+						file.delete();
+					}
 					OutputStream receivedFile = new FileOutputStream(path);//fichier buffer 
 					InputStream input = clientSocks.getInputStream();//entrée des fichiers 
 
 					byte[] bytes = new byte[16*1024];
 					int fileSize = 0;
 					int count = input.read(bytes); //lecture du paquet TCP et enregistré dans bytes
-					while (fileSize < length && count > 0) {
-						receivedFile.write(bytes, 0, count);
-						fileSize += count;
-						count=input.read(bytes);
+					System.out.println("To Download : "+(length-fileSize)+" count : "+count);
+					while (fileSize < length ) { //&& count > 0
+						if(count >0){
+							receivedFile.write(bytes, 0, count);
+							fileSize += count;
+						}
+						if (input.available()>0){
+							count=input.read(bytes);
+							System.out.println("To Download : "+(length-fileSize)+" count : "+count);
+						}
+						else {
+							count=0;
+						}
 					}
+					System.out.println("fin réception");
+
 					receivedFile.close();
 
 					comModule.manageFileMessage(receivedMsg,path);
@@ -129,11 +148,11 @@ public class ManagerTCP extends Thread{
 	public Socket getClientSocks() {
 		return this.clientSocks;
 	}
-	
+
 	public int getLocalServerPort() {
 		return this.localServerPort;
 	}
-	
+
 	public void setNewClientSocket(InetAddress IP, int port) {
 		try {
 			this.localServerPort=-1;
@@ -147,7 +166,7 @@ public class ManagerTCP extends Thread{
 
 
 	public void sendMessage(Message msg){
-		try {
+		try {			
 			writer.writeObject((Message) msg);
 			System.out.println("Message envoyé !");
 		} catch (IOException e) {
@@ -155,40 +174,45 @@ public class ManagerTCP extends Thread{
 		}
 	}
 
-	public void sendTxt(String str, String destPseudo,String srcPseudo){
+	/*public void sendTxt(String str, String destPseudo,String srcPseudo){
 		Message msg= new Message(DataType.Text, str, destPseudo,srcPseudo);
 		try {
 			writer.writeObject(msg);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	public void sendFile(File file ,String destPseudo,String srcPseudo){
 		try {
 			//le premier message contient le nom du fichier
 			Message msgWithName = new Message(DataType.File, file.getName(),destPseudo, srcPseudo);
 			this.sendMessage(msgWithName);
-
+			
 			//le deuxième message contient la taille totale du fichier
 			Message msgWithFileLength = new Message(DataType.File, file.length() + "", destPseudo, srcPseudo);
 			this.sendMessage(msgWithFileLength);
-
+			
 			byte[] bytes = new byte[16 * 1024];//16*1024 = taille max des paquets TCP
 			InputStream in = new FileInputStream(file);
 			OutputStream out = clientSocks.getOutputStream();
+			
+			System.out.println("Available bytes : "+in.available());
 
-			int cpt;
-			cpt = in.read(bytes); //lecture du fichier et enregistrement dans bytes
+			int nbBytes = in.read(bytes); //lecture du fichier et enregistrement dans bytes
 
-			while (cpt > 0) {
-				out.write(bytes, 0, cpt);
-				cpt = in.read(bytes);
+
+			while (in.available()>0) {
+				System.out.println("Available bytes : "+in.available());
+				out.write(bytes, 0, nbBytes);
+				nbBytes = in.read(bytes);
 			}
 
 			out.flush();
 			in.close();
-
+			
+			System.out.println("tps attente : "+ file.length()/7500);
+			Thread.sleep(file.length()/7500);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

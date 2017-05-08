@@ -28,7 +28,11 @@ import controller.Controller;
 import model.SystemState;
 
 public class TestNetwork {
-	//static SystemState sysState;
+	
+	
+	public TestNetwork(){
+		
+	}
 	
 	public class FakeController extends Controller{
 		
@@ -48,27 +52,34 @@ public class TestNetwork {
 		public void notifyLogoutUser(String pseudo){
 		}
 	}
+
+	
+	SystemState sysState;
+	FakeController controller;
+	
 	
 	
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-//		System.out.println("Création de sysState");
-//		String nom= "toto";
-//		TestNetwork.sysState= new SystemState(nom);
-//		System.out.println("Fin création de sysState");
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 	}
 
+	
 	@Before
 	public void setUp() throws Exception {
+		System.out.println("Création de sysState");
+		String nom= "toto";
+		sysState=new SystemState(new FakeController(),nom);
+		System.out.println("Fin création de sysState");
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		sysState.logOutLoggedUser();
 	}
 
 	
@@ -134,6 +145,33 @@ public class TestNetwork {
 	
 	@Test
 	public void testSendImage() {
+		String orga="toto";
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		File fileToSend= new File("./testdir/macareux.jpg");
+		if (fileToSend.exists()){
+			System.out.println("*********Bien gros***********");
+			sysState.sendFile(orga, orga, fileToSend);//PUTAIN PK ÇA MARCHE PAS ICI ALORS QUE ÇA MARCHE DANS TESTCOM
+		}
+		else {
+			System.out.println("*********Erreur gros***********");
+			assertFalse(false);
+		}
+		
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	@Test
+	public void testSendSameImage() {
 		String orga= "toto";
 		SystemState sysState= new SystemState(new FakeController(),orga);
 		
@@ -158,7 +196,8 @@ public class TestNetwork {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
+	
 	
 //	@Test
 //	public void testSendFile() {
