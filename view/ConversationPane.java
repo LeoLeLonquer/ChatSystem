@@ -104,7 +104,7 @@ public class ConversationPane extends JPanel implements ActionListener{
 
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		panel.setBackground(Color.PINK);
+		panel.setBackground(Color.LIGHT_GRAY);
 
 		JPanel content = new JPanel(new GridBagLayout());
 		content.setOpaque(false);
@@ -114,7 +114,7 @@ public class ConversationPane extends JPanel implements ActionListener{
 		GridBagLayout gbMessage = new GridBagLayout(); 
 		GridBagConstraints c = new GridBagConstraints(); 
 		yourMsgPane.setLayout(gbMessage); 
-		yourMsgPane.setBackground(Color.YELLOW);
+		yourMsgPane.setBackground(Color.LIGHT_GRAY);
 
 		c.weightx = 5;
 		c.weighty= 1; 

@@ -26,7 +26,7 @@ public class Graphic {
 		frame.add(this.cp);
 
 		// frame.pack();
-		frame.setSize(1250, 750);
+		frame.setSize(750, 500);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		

@@ -45,7 +45,7 @@ public class TestCommunication extends Thread{
 
 	public void run(){
 		System.out.println("start");
-		while(true){
+		//while(true){
 			try {
 				TimeUnit.SECONDS.sleep(1);
 				System.out.println("*********Liste des utilisateurs connectés*******");
@@ -54,8 +54,9 @@ public class TestCommunication extends Thread{
 				TimeUnit.SECONDS.sleep(1);
 			
 				sysState.sendMessage("toto","toto","Coucou");
+				sysState.sendFile("toto","toto",new File("./testdir/304.jpg"));
 
-				sysState.logOutLoggedUser();
+				//sysState.logOutLoggedUser();
 
 //				System.out.println("Envoi message TCP");
 //				sysState.getComModule().sendTxtMessage("Coucou","toto");
@@ -63,7 +64,7 @@ public class TestCommunication extends Thread{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+		
 
 		//TEST ENVOI DE MESSAGE
 
@@ -78,7 +79,7 @@ public class TestCommunication extends Thread{
 																		//fichiers trop lourds à la suite
 
 //		sysState.sendMessage("toto","toto","Coucou");
-		//sysState.sendFile("toto","toto",new File("./testdir/304.jpg"));
+		sysState.sendFile("toto","toto",new File("./testdir/304.jpg"));
 	
 
 

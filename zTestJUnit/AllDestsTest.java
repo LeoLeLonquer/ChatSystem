@@ -68,13 +68,6 @@ public class AllDestsTest {
 	public void tearDown() throws Exception {
 	}
 
-	/**
-	 * Test method for {@link model.AllDests#AllDests()}.
-	 */
-	@Test
-	public void testAllDests() {
-		fail("Not yet implemented");
-	}
 
 	/**
 	 * Test method for {@link model.AllDests#addUser(model.User)}.
@@ -97,7 +90,6 @@ public class AllDestsTest {
 		System.out.println("");
 
 		assertEquals(alldests.getListUsers().toString(), resultToHave.toString()); 
-		fail("Not yet implemented");
 	}
 
 	/**
@@ -153,10 +145,10 @@ public class AllDestsTest {
 		AllDests alldests = new AllDests();
 
 		HashMap<Integer, Groupe> resultToHave = new HashMap<Integer,Groupe>(); 
-		resultToHave.put(5, g2); 
+		resultToHave.put(g2.hashCode(), g2); 
 		alldests.addGroup(g1); 
 		alldests.addGroup(g2); 
-		alldests.removeGroup(4); // remove g1 
+		alldests.removeGroup(g1.hashCode()); // remove g1 
 
 		System.out.println("Test removeGroup: " ); 
 		System.out.println("Result to have: " + resultToHave.toString()); 

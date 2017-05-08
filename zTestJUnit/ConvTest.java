@@ -18,7 +18,6 @@ public class ConvTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Conv conv=new Conv();
 	}
 
 	@AfterClass
