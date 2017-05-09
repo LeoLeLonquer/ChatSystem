@@ -34,33 +34,36 @@ o Styles de textes différents dans la zone texte de conversation
 -> LISTE DE TESTS JUNIT
 
 Tests User 
-	testGetPseudo : validŽ
-	testGetUserID :	 validŽ
-	testGetIP : 	validŽ
-	testGetStatus :	 validŽ
-	testGetConv :	 validŽ
-	testSetIP :	 validŽ
-	testSetStatus :	 validŽ
+	testGetPseudo : validé
+	testGetUserID :	 validé
+	testGetIP : 	validé
+	testGetStatus :	 validé
+	testGetConv :	 validé
+	testSetIP :	 validé
+	testSetStatus :	 validé
 
 Test AllDests	
-	testAddUser : Žchec (Tient aux problmes dÕimplŽmentation du test)
-	testAddGroup : validŽ
-	testRemoveUser : validŽ
-	testRemoveGroup : Žchec (origine inconnue)
-	testSearchUser : validŽ 
-	testSearchGroup : Žchec (Tient aux problmes dÕimplŽmentation du test)
+	testAddUser : échec (Tient aux problèmes dÕimplémentation du test)
+	testAddGroup : validé
+	testRemoveUser : validé
+	testRemoveGroup : échec (origine inconnue)
+	testSearchUser : validé 
+	testSearchGroup : échec (Tient aux problèmes dÕimplémentation du test)
 
 Test ConvTest 
-	testReadLastMessage : validŽ
-	testReadMessage : validŽ
-	testreadAllConv : validŽ
+	testReadLastMessage : validé
+	testReadMessage : validé
+	testreadAllConv : validé
 
 TestNetwork 
-	testSendTxtMessage : validŽ
-	testSendFile : erreur timeout (Le systme dÕenvoi de fichier est irrŽgulier, il fonctionne pour certains fichiers et pas pour dÕautres. Ici le fichier est partiel, donc corrompue. De plus la vŽrification dans JUnit de lÕexistence des fichiers pose problme car il ne semble pas tre reconnus lors des dŽclarations de classe File )
-	testSendImage : erreur timeout (Ce test fonctionne en vŽritŽ, lÕimage est bien transfŽrŽe sans tre corrompue dans le dossier courant, mais la classe File ne reconnait pas le fichier)
-	testSendSameImage : Žchec (Problme de reconnaissance de fichier)
-	testSendALotOfTxtMessages :Žchec (Erreur au niveau de lÕimplŽmentation du test, mais fonctionne en vŽritŽ)
+	testSendTxtMessage : validé
+	testSendFile : erreur timeout (Le système dÕenvoi de fichier est irrégulier, il fonctionne pour certains fichiers et pas pour dÕautres. Ici le fichier est partiel, donc corrompue. De plus la vérification dans JUnit de lÕexistence des fichiers pose problème car il ne semble pas être reconnus lors des déclarations de classe File )
+	testSendImage : erreur timeout (Ce test fonctionne en vérité, lÕimage est bien transférée sans être corrompue dans le dossier courant, mais la classe File ne reconnait pas le fichier)
+	testSendSameImage : échec (Problème de reconnaissance de fichier)
+	testSendALotOfTxtMessages :échec (Erreur au niveau de lÕimplémentation du test, mais fonctionne en vérité)
 
-DÕautres tests de dŽconnexion ou de connexion Žtaient prŽvues mais par les difficultŽs dÕimplŽmentation des tests, ils ont ŽtŽ abandonnŽs. De plus la dŽconnexion de lÕutilisateur principal ou ŽloignŽ conduisant ˆ la fermeture de socket TCP ou UDP provoque de nombreuses exceptions sur les InputStream. De nombreux tests on ŽtŽ entrepris pour rŽsoudre ce problme, sans rŽsultats.
+DÕautres tests de déconnexion ou de connexion étaient prévues mais par les difficultés dÕimplémentation des tests, ils ont été abandonnés. De plus la déconnexion de lÕutilisateur principal ou éloigné conduisant à la fermeture de socket TCP ou UDP provoque de nombreuses exceptions sur les InputStream. De nombreux tests on été entrepris pour résoudre ce problème, sans résultats.
+
+-> Connexion avec d'autres utilisateurs
+	La discussion avec d'autres utilisateurs fonctionnent mais l'envoi de fichiers pose encore problème, malgré de nombreuses tentatives. Le critère de fin de réception de fichier est ce qui semble poser problème.
 

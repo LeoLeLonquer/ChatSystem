@@ -51,6 +51,9 @@ public class Controller {
 		sysState.logOutLoggedUser();
 	}
 	
+	public String getLastConv(String destUser){
+		return sysState.getAllDests().getUser(destUser.hashCode()).getConv().readAllConv();
+	}
 	
 	public ArrayList <String> getListOfConnectedUsers (){
 		ArrayList<String> al = new ArrayList<String>();

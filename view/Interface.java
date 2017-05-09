@@ -9,6 +9,7 @@ import java.util.HashMap;
 import javax.swing.JButton;
 
 import controller.Controller;
+
 import javax.swing.*; 
 
 public class Interface {
@@ -103,12 +104,16 @@ public class Interface {
 	}
 	
 	public void receiveMsg(String friendUser, String message){
-		this.listGraphics.get(friendUser.hashCode()).getConvoPane().update( friendUser,  message);
+		if (this.listGraphics.containsKey(friendUser.hashCode())){
+			this.listGraphics.get(friendUser.hashCode()).getConvoPane().update( friendUser,  message);
+		}
 	}
 	
 	public void receiveFile(String friendUser, File file){
-		this.listGraphics.get(friendUser.hashCode()).getConvoPane().getConvoTextArea().append(friendUser + "send " + file.getName());
-		// click on file to open it?? 
+		if (this.listGraphics.containsKey(friendUser.hashCode())){
+			this.listGraphics.get(friendUser.hashCode()).getConvoPane().getConvoTextArea().append(friendUser + "send " + file.getName());
+		}
+			// click on file to open it?? 
 	}
 	
 	public boolean notifyLogout(){ 
@@ -125,6 +130,10 @@ public class Interface {
 
 	public HashMap<Integer,Graphic> getListGraphics() {
 		return listGraphics;
+	}
+
+	public String getLastConv(String dest) {
+		return controller.getLastConv(dest);
 	}
 
 

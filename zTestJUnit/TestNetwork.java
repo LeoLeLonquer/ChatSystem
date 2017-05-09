@@ -94,10 +94,10 @@ public class TestNetwork {
 		if (fileToSend.exists()){
 			fileToSend.delete();
 		}
-		File fileToSend=new File("304.jpg");
-		if (fileToSend.exists()){
-			fileToSend.delete();
-		}
+//		File fileToSend=new File("304.jpg");
+//		if (fileToSend.exists()){
+//			fileToSend.delete();
+//		}
 	}
 
 

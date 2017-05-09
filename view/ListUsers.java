@@ -79,6 +79,7 @@ public class ListUsers extends JFrame implements ActionListener {
 						Graphic g = new Graphic( this.currentUser, b.getText() , intf); 
 						System.out.println("Nom du bouton: "+b.getText());
 						intf.getListGraphics().put(b.getText().hashCode(), g);
+						g.getConvoPane().update(b.getText(), intf.getLastConv(b.getText()));
 					}
 	
 			}

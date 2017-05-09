@@ -75,7 +75,7 @@ public class LoginWindow extends JFrame implements ActionListener{
 	 }
 
 	 
-	 private void PressEnter(JTextArea loginArea, LoginWindow lw){ 
+	 private void PressEnter(final JTextArea loginArea, final LoginWindow lw){ 
 			this.loginArea.addKeyListener(new KeyListener(){
 			@Override
 			public void keyPressed(KeyEvent e) {		    	

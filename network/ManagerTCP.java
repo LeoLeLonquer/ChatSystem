@@ -103,7 +103,7 @@ public class ManagerTCP extends Thread{
 				}
 				else if (receivedMsg.getType()==DataType.File){
 					// TODO demande-t-on à l'utilisateur s'il veut télécharger le fichier ?
-
+					System.out.println("Début Réception fichier");
 					Message msgWithFileLength = (Message) reader.readObject();
 					int length = Integer.parseInt(msgWithFileLength.getData());//le deuxième message contient la taille totale du fichier
 

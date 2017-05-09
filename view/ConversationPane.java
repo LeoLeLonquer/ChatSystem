@@ -59,8 +59,8 @@ public class ConversationPane extends JPanel implements ActionListener{
 		return this.convo; 
 	}
 
-	private void DisplayMessage(String currentUser, String friendUser, JButton send, 
-			JTextArea yourArea, JTextArea convo){ 
+	private void DisplayMessage(final String currentUser, final String friendUser, JButton send, 
+			final JTextArea yourArea,  final JTextArea convo){ 
 
 		send.addActionListener(this);
 		yourArea.addKeyListener(new KeyListener(){
